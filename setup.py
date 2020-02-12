@@ -11,6 +11,7 @@ setup(
     long_description_content_type="text/markdown",
     author="David Richardson",
     author_email="drichardson42@gatech.edu",
+    url="https://github.gatech.edu/LF-Group/lfdata",
     py_modules=["lfdata"],
     package_dir={"": "src"},
     classifiers=[
@@ -23,4 +24,5 @@ setup(
         "Intended Audience :: Science/Research",
     ],
     install_requires=["scipy"],
+    extras_require={"dev": ["twine"]},
 )

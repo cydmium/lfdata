@@ -1,4 +1,4 @@
-""" Provides the LFData class and data_loader function
+""" Provides the LFData class and load_rx_data function
 
 LFData holds all data reported by the LF AWESOME receiver and includes several
 preprocessing operations.
@@ -10,7 +10,7 @@ from datetime import datetime
 from scipy.io import loadmat
 
 
-def data_loader(mat_file, variables=None):
+def load_rx_data(mat_file, variables=None):
     """ Properly format an LF AWESOME receiver's output mat file
 
     Parameters
