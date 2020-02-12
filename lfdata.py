@@ -69,13 +69,13 @@ def data_loader(mat_file, variables=None):
         ]:
             # Should be strings, but are in array of ascii
             data[key] = "".join(chr(char) for char in data[key])
-    data["start_date"] = datetime(
-        data["start_year"],
-        data["start_month"],
-        data["start_day"],
-        data["start_hour"],
-        data["start_minute"],
-        data["start_second"],
+    data["start_time"] = datetime(
+        data.pop("start_year"),
+        data.pop("start_month"),
+        data.pop("start_day"),
+        data.pop("start_hour"),
+        data.pop("start_minute"),
+        data.pop("start_second"),
     )
 
     return data
