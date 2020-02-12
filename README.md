@@ -15,12 +15,12 @@ pip install lfdata
 ## Example Usage
 
 ```python
-from lfdata import data_loader
+from lfdata import load_rx_data
 
 # Load an entire .mat file
-data = data_loader("path_to_mat_file")
+data = load_rx_data("path_to_mat_file")
 
 # Load a specific variable or set of variables
 variables = ["station_name", "call_sign", "data"]
-data = data_loader("path_to_mat_file", variables)
+data = load_rx_data("path_to_mat_file", variables)
 ```
