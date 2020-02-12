@@ -5,7 +5,7 @@ with open("README.md", "r") as f:
 
 setup(
     name="lfdata",
-    version="0.0.2",
+    version="0.0.3",
     description="Tools for interacting with GT's LF AWESOME Receiver data",
     long_description=long_description,
     long_description_content_type="text/markdown",
