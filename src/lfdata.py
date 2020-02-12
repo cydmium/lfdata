@@ -69,13 +69,23 @@ def data_loader(mat_file, variables=None):
         ]:
             # Should be strings, but are in array of ascii
             data[key] = "".join(chr(char) for char in data[key])
-    data["start_time"] = datetime(
-        data.pop("start_year"),
-        data.pop("start_month"),
-        data.pop("start_day"),
-        data.pop("start_hour"),
-        data.pop("start_minute"),
-        data.pop("start_second"),
-    )
+    time_vals = [
+        "start_year",
+        "start_month",
+        "start_day",
+        "start_hour",
+        "start_minute",
+        "start_second",
+    ]
+    # If all of the time data is loaded, create a datetime object
+    if (variables is None) or all(elem in variables for elem in time_vals):
+        data["start_time"] = datetime(
+            data.pop("start_year"),
+            data.pop("start_month"),
+            data.pop("start_day"),
+            data.pop("start_hour"),
+            data.pop("start_minute"),
+            data.pop("start_second"),
+        )
 
     return data
