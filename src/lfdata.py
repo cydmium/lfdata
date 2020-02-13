@@ -1,4 +1,5 @@
 """ Provides the LFData class and load_rx_data function
+
 LFData holds all data reported by the LF AWESOME receiver and includes several
 preprocessing operations.
 data_loader provides a quick way of converting the .mat files provided by the
@@ -25,18 +26,48 @@ class LFData(object):
             Two dictionaries corresponding to amplitude and phase of a path
         """
         if mat_files is not None:
-            if len(mat_files) != 2:
-                raise ValueError("Only two mat_files are accepted.")
             if data_dicts is not None:
                 print(
                     "Both mat_files and data_dicts reported, using mat_files."
                 )
-            data = [load_rx_data(mat_files[0]), load_rx_data(mat_files[1])]
-            self.combine_data(data)
+                self.load_mats(mat_files)
         elif data_dicts is not None:
-            if len(data_dicts) != 2:
-                raise ValueError("Only two data_dicts are accepted.")
-            self.combine_data(data_dicts)
+            self.load_dicts(data_dicts)
+
+    def load_mats(self, mat_files):
+        """ Load .mat files into the LFData object
+
+        Parameters
+        ----------
+        mat_files : list of strings, optional
+            Two mat files correseponding to amplitude and phase of a path
+
+        Returns
+        -------
+        None
+
+        """
+        if len(mat_files) != 2:
+            raise ValueError("Only two mat_files are accepted.")
+        data = [load_rx_data(mat_files[0]), load_rx_data(mat_files[1])]
+        self.combine_data(data)
+
+    def load_dicts(self, data_dicts):
+        """ Load data dictionaries into LFData object
+
+        Parameters
+        ----------
+        data_dicts : list of dictionaries, optional
+            Two dictionaries corresponding to amplitude and phase of a path
+
+        Returns
+        -------
+        None
+
+        """
+        if len(data_dicts) != 2:
+            raise ValueError("Only two data_dicts are accepted.")
+        self.combine_data(data_dicts)
 
     def combine_data(self, data_list):
         """ Combine amplitude and phase data into a single data structure
@@ -88,7 +119,7 @@ class LFData(object):
                 )
         except KeyError:
             print(
-                "Unable to verify duplicate amplitude or phase values to missing key"
+                "Unable to verify duplicate amplitude or phase values due to missing key"
             )
 
         # Setup class variables for each entry in dictionary
