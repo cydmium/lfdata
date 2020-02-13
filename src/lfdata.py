@@ -32,11 +32,11 @@ class LFData(object):
                     "Both mat_files and data_dicts reported, using mat_files."
                 )
             data = [load_rx_data(mat_files[0]), load_rx_data(mat_files[1])]
-            self.data = self.combine_data(data)
+            self.combine_data(data)
         elif data_dicts is not None:
             if len(data_dicts) != 2:
                 raise ValueError("Only two data_dicts are accepted.")
-            self.data = self.combine_data(data_dicts)
+            self.combine_data(data_dicts)
 
     def combine_data(self, data_list):
         """ Combine amplitude and phase data into a single data structure
