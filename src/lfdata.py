@@ -214,16 +214,16 @@ class LFData(object):
                 setattr(
                     self,
                     "amp_lin",
-                    np.array(value)
+                    np.array(value).squeeze()
                     if data_list[0]["is_amp"]
-                    else np.array(data_list[1]["data"]),
+                    else np.array(data_list[1]["data"]).squeeze(),
                 )
                 setattr(
                     self,
                     "phase_deg",
-                    np.array(value)
+                    np.array(value).squeeze()
                     if data_list[1]["is_amp"]
-                    else np.array(data_list[1]["data"]),
+                    else np.array(data_list[1]["data"]).squeeze(),
                 )
             elif key == "is_amp":
                 # Skip is_amp key
@@ -234,7 +234,7 @@ class LFData(object):
     def to_real_imag(self, remove_amp_phase=False):
         """ Calculates the real and imaginary components of the data
 
-        Paramters
+        Parameters
         ---------
         remove_amp_phase : bool, optinal
             Option to remove the amplitude-phase version of the data to save space

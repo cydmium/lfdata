@@ -27,6 +27,11 @@ All dates listed follow the ISO standard of yyyy-mm-dd.
 - LFData.to_deg method [David Richardson <drichardson42@gatech.edu>]
     - Convert loaded phase data to degress (default)
 
+### Changed
+- Adjust shape of all data arrays (amp_lin, amp_db, phase_deg, phase_rad,
+  data_cx, data_real, data_imag) to (N, ) instead of (N,1)
+    - Improves ability to iterate of data
+
 
 ## [0.0.3] - 2020-02-12
 ### Changed
