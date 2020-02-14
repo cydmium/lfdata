@@ -30,7 +30,7 @@ class LFData(object):
                 print(
                     "Both mat_files and data_dicts reported, using mat_files."
                 )
-                self.load_mats(mat_files)
+            self.load_mats(mat_files)
         elif data_dicts is not None:
             self.load_dicts(data_dicts)
 
@@ -125,17 +125,17 @@ class LFData(object):
         # Setup class variables for each entry in dictionary
         for key, value in data_list[0].items():
             if key == "data":
-                # Split data into amp_data and phase_data
+                # Split data into amplitude and phase data
                 setattr(
                     self,
-                    "amp_data",
+                    "amp_lin",
                     np.array(value)
                     if data_list[0]["is_amp"]
                     else np.array(data_list[1]["data"]),
                 )
                 setattr(
                     self,
-                    "phase_data",
+                    "phase_deg",
                     np.array(value)
                     if data_list[1]["is_amp"]
                     else np.array(data_list[1]["data"]),
@@ -145,6 +145,189 @@ class LFData(object):
                 continue
             else:
                 setattr(self, key, value)
+
+    def to_real_imag(self, remove_amp_phase=False):
+        """ Calculates the real and imaginary components of the data
+
+        Paramters
+        ---------
+        remove_amp_phase : bool, optinal
+            Option to remove the amplitude-phase version of the data to save space
+
+        Returns
+        -------
+        None
+
+        """
+        if hasattr(self, "data_cx"):
+            print("Data is already in real and imaginary components")
+        else:
+            self.data_cx = self.to_lin() * np.exp(1j * self.to_rad())
+            self.data_real = np.real(self.data_cx)
+            self.data_imag = np.imag(self.data_cx)
+        if remove_amp_phase:
+            for attr in ["amp_lin", "amp_db", "phase_deg", "phase_rad"]:
+                try:
+                    delattr(self, attr)
+                except AttributeError:
+                    continue
+
+    def to_amp_phase(self, remove_cx=False, deg=True):
+        """ Calculates the amplitude and phase components of the data
+
+        Paramters
+        ---------
+        remove_cx : bool, optinal
+            Option to remove the real-imaginary version of the data to save space
+        deg : bool, optional
+            Option to save the data as degrees
+
+        Returns
+        -------
+        None
+
+        """
+        if hasattr(self, "data_cx"):
+            self.amp_lin = np.abs(self.data_cx)
+            if deg:
+                self.phase_deg = np.angle(self.data_cx, deg=True)
+            else:
+                self.phase_rad = np.angle(self.data_cx)
+        elif hasattr(self, "data_real") and hasattr(self, "data_imag"):
+            cx = self.data_real + 1j * self.data_imag
+            self.amp_lin = np.abs(cx)
+            if deg:
+                self.phase_deg = np.angle(cx, deg=True)
+            else:
+                self.phase_rad = np.angle(cx)
+        elif hasattr(self, "amp_lin") or hasattr(self, "amp_db"):
+            print("Data is already in amplitude and phase")
+        else:
+            raise AttributeError(
+                "You have not loaded any data into this object!"
+            )
+        if remove_cx:
+            for attr in ["data_cx", "data_real", "data_imag"]:
+                try:
+                    delattr(self, attr)
+                except AttributeError:
+                    continue
+
+    def to_db(self, remove_lin=False):
+        """ Calculates the amplitude in dB
+
+        Paramters
+        ---------
+        remove_lin : bool, optinal
+            Option to remove the linear version of the data to save space
+
+        Returns
+        -------
+        numpy array or None:
+            returns None if data is in real/imag or amp_db otherwise
+
+        """
+        if hasattr(self, "amp_lin"):
+            self.amp_db = 20 * np.log10(self.amp_lin)
+            if remove_lin:
+                delattr(self, "amp_lin")
+        elif hasattr(self, "amp_db"):
+            print("Data is already in dB.")
+        elif hasattr(self, "data_cx"):
+            print("Data is in real and imaginary components")
+            return None
+        else:
+            raise AttributeError(
+                "You have not loaded any data into this object!"
+            )
+        return self.amp_db
+
+    def to_lin(self, remove_db=False):
+        """ Calculates the linear amplitude
+
+        Paramters
+        ---------
+        remove_db : bool, optinal
+            Option to remove the db version of the data to save space
+
+        Returns
+        -------
+        numpy array or None:
+            returns None if data is in real/imag or amp_lin otherwise
+
+        """
+        if hasattr(self, "amp_db"):
+            self.amp_lin = 10 ** (self.amp_db / 20)
+            if remove_db:
+                delattr(self, "amp_db")
+        elif hasattr(self, "amp_lin"):
+            print("Data is already in linear.")
+        elif hasattr(self, "data_cx"):
+            print("Data is in real and imaginary components")
+            return None
+        else:
+            raise AttributeError(
+                "You have not loaded any data into this object!"
+            )
+        return self.amp_lin
+
+    def to_rad(self, remove_deg=False):
+        """ Calculates the angle in radians
+
+        Paramters
+        ---------
+        remove_deg : bool, optinal
+            Option to remove the degrees version of the data to save space
+
+        Returns
+        -------
+        numpy array or None:
+            returns None if data is in real/imag or phase_rad otherwise
+
+        """
+        if hasattr(self, "phase_deg"):
+            self.phase_rad = np.deg2rad(self.phase_deg)
+            if remove_deg:
+                delattr(self, "phase_deg")
+        elif hasattr(self, "phase_rad"):
+            print("Data is already in radians.")
+        elif hasattr(self, "data_cx"):
+            print("Data is in real and imaginary components")
+            return None
+        else:
+            raise AttributeError(
+                "You have not loaded any data into this object!"
+            )
+        return self.phase_rad
+
+    def to_deg(self, remove_rad=False):
+        """ Calculates the angle in degrees
+
+        Parameters
+        ----------
+        remove_rad : bool, optional
+            Option to remove the radian version of the data to save space
+
+        Returns
+        -------
+        numpy array or None:
+            returns None if data is in real/imag or phase_deg otherwise
+
+        """
+        if hasattr(self, "phase_rad"):
+            self.phase_rad = np.rad2deg(self.phase_deg)
+            if remove_rad:
+                delattr(self, "phase_rad")
+        elif hasattr(self, "phase_deg"):
+            print("Data is already in degrees.")
+        elif hasattr(self, "data_cx"):
+            print("Data is in real and imaginary components")
+            return None
+        else:
+            raise AttributeError(
+                "You have not loaded any data into this object!"
+            )
+        return self.phase_deg
 
 
 def load_rx_data(mat_file, variables=None, file_check=True):
