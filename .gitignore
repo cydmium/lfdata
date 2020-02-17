@@ -80,3 +80,5 @@ Sessionx.vim
 tags
 # Persistent undo
 [._]*.un~
+# Vim directory
+.vim

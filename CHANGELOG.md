@@ -8,29 +8,50 @@ All dates listed follow the ISO standard of yyyy-mm-dd.
 ### Added
 - LFData class [David Richardson <drichardson42@gatech.edu>]
     - Main class for interacting with an Rx-Tx path's data
-- LFData.load_mats method [David Richardson <drichardson42@gatech.edu>]
+- LFData.load_mats method to lf.data.rx.rx [David Richardson <drichardson42@gatech.edu>]
     - Load two .mat files into the LFData class
-- LFData.load_dicts method [David Richardson <drichardson42@gatech.edu>]
+- LFData.load_dicts method to lf.data.rx [David Richardson <drichardson42@gatech.edu>]
     - Load two dictionaries from load_rx_data into the LFData class
-- LFData.combine_data method [David Richardson <drichardson42@gatech.edu>]
+- LFData.combine_data method to lf.data.rx [David Richardson <drichardson42@gatech.edu>]
     - Combine two dictionaries, one amplitude and one phase, into a set of LFData class attributes
-- LFData.to_amp_phase method [David Richardson <drichardson42@gatech.edu>]
+- LFData.to_amp_phase method to lf.data.rx [David Richardson <drichardson42@gatech.edu>]
     - Convert loaded data to amplitude and phase (default)
-- LFData.to_real_imag method [David Richardson <drichardson42@gatech.edu>]
+- LFData.to_real_imag method to lf.data.rx [David Richardson <drichardson42@gatech.edu>]
     - Convert loaded data to real and imaginary components
-- LFData.to_db method [David Richardson <drichardson42@gatech.edu>]
+- LFData.to_db method to lf.data.rx [David Richardson <drichardson42@gatech.edu>]
     - Convert loaded amplitude data to decibels
-- LFData.to_lin method [David Richardson <drichardson42@gatech.edu>]
+- LFData.to_lin method to lf.data.rx [David Richardson <drichardson42@gatech.edu>]
     - Convert loaded amplitude data to linear scale (default)
-- LFData.to_rad method [David Richardson <drichardson42@gatech.edu>]
+- LFData.to_rad method to lf.data.rx [David Richardson <drichardson42@gatech.edu>]
     - Convert loaded phase data to radians
-- LFData.to_deg method [David Richardson <drichardson42@gatech.edu>]
+- LFData.to_deg method to lf.data.rx [David Richardson <drichardson42@gatech.edu>]
     - Convert loaded phase data to degress (default)
+- DataQuality class to lf.data.rxquality [David Richardson <drichardson42@gatech.edu>]
+    - Track data quality metrics
+- EvalLF class to lf.data.rxquality [David Richardson <drichardson42@gatech.edu>]
+    - Various methods for evaluating LF data quality
+- EvalLF.load_config to lf.data.rxquality [David Richardson <drichardson42@gatech.edu>]
+    - Loads configuration file for evaluation parameters
+- EvalLF.eval_receiver to lf.data.rxquality [David Richardson
+  <drichardson42@gatech.edu>]
+    - Evaluate the functionality of the receiver
+- EvalLF.eval_amp to lf.data.rxquality [David Richardson <drichardson42@gatech.edu>]
+    - Evaluate the quality of the amplitude data
+- EvalLF.eval_phase to lf.data.rxquality [David Richardson <drichardson42@gatech.edu>]
+    - Evaluate the quality of the phase data
+- findNans to lf.utils [David Richardson <drichardson42@gatech.edu>]
+    - Function for finding the location of nans in an array
+- repeatedNans to lf.utils [David Richardson <drichardson42@gatech.edu>]
+    - Function for finding consecutive nans in an array
 
 ### Changed
 - Adjust shape of all data arrays (amp_lin, amp_db, phase_deg, phase_rad,
-  data_cx, data_real, data_imag) to (N, ) instead of (N,1)
-    - Improves ability to iterate of data
+  data_cx, data_real, data_imag) to (N, ) instead of (N,1) [David Richardson
+  <drichardson42@gatech.edu>]
+    - Improves ability to iterate through data
+- Modules have been adjusted to fit into the lf package. [David Richardson
+  <drichardson42@gatech.edu>]
+    - To import, now use lf.data.rx, lf.data.rxquality, lf.utils
 
 
 ## [0.0.3] - 2020-02-12
