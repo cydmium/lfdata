@@ -4,7 +4,9 @@ The format for this changelog is based on [Keep a Changelog](https://keepachange
 and this project adheres to (mostly) [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 All dates listed follow the ISO standard of yyyy-mm-dd.
 
-## [Unreleased]
+## [0.0.5] - 2020-02-17
+Note: v0.0.4 was skipped due to a packaging error that prevented the 0.0.4
+upload to pypi. v0.0.5 is what v0.0.4 would have been.
 ### Added
 - LFData class [David Richardson <drichardson42@gatech.edu>]
     - Main class for interacting with an Rx-Tx path's data
