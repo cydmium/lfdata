@@ -4,7 +4,7 @@ with open("README.md", "r") as f:
     long_description = f.read()
 
 setup(
-    name="lfdata",
+    name="lf",
     version="0.0.4",
     description="Tools for interacting with GT's LF AWESOME Receiver data",
     long_description=long_description,

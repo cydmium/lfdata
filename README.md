@@ -9,7 +9,7 @@ data is available publicly at [Waldo World](https://waldo.world/).
 Run the following to install:
 
 ```python
-pip install lfdata
+pip install lf
 ```
 
 ## Example Usage
