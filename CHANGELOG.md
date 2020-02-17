@@ -53,6 +53,11 @@ All dates listed follow the ISO standard of yyyy-mm-dd.
   <drichardson42@gatech.edu>]
     - To import, now use lf.data.rx, lf.data.rxquality, lf.utils
 
+### Removed
+- As noted in the changed section, the lfdata module has been removed in favor
+  of the more modular lf.x scheme [David Richardson <drichardson42@gatech.edu>]
+    - The previous lfdata module is now available as lf.data.rx
+
 
 ## [0.0.3] - 2020-02-12
 ### Changed
