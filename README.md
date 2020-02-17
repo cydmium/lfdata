@@ -15,12 +15,19 @@ pip install lfdata
 ## Example Usage
 
 ```python
-from lfdata import load_rx_data
+import lf
 
 # Load an entire .mat file
-data = load_rx_data("path_to_mat_file")
+data = lf.data.rx.load_rx_data("path_to_mat_file")
 
 # Load a specific variable or set of variables
 variables = ["station_name", "call_sign", "data"]
-data = load_rx_data("path_to_mat_file", variables)
+data = lf.data.rx.load_rx_data("path_to_mat_file", variables)
+
+# Create an LFData object from two mat files or dictionaries
+mat_files = ["amplitude.mat", "phase.mat"]
+data = lf.data.rx.LFData(mat_files)
+
+# Evaluate the quality of your data with the EvalLF object
+data_eval = lf.data.rxquality.EvalLF(data)
 ```

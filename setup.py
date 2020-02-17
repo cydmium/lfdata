@@ -1,18 +1,18 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 with open("README.md", "r") as f:
     long_description = f.read()
 
 setup(
     name="lfdata",
-    version="0.0.3",
+    version="0.0.4",
     description="Tools for interacting with GT's LF AWESOME Receiver data",
     long_description=long_description,
     long_description_content_type="text/markdown",
     author="David Richardson",
     author_email="drichardson42@gatech.edu",
     url="https://github.gatech.edu/LF-Group/lfdata",
-    py_modules=["lfdata"],
+    packages=find_packages(where="src"),
     package_dir={"": "src"},
     classifiers=[
         "Programming Language :: Python :: 3",
@@ -23,6 +23,6 @@ setup(
         "Development Status :: 2 - Pre-Alpha",
         "Intended Audience :: Science/Research",
     ],
-    install_requires=["scipy"],
+    install_requires=["scipy", "numpy", "sklearn"],
     extras_require={"dev": ["twine"]},
 )
