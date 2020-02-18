@@ -119,7 +119,8 @@ class EvalLF(object):
 
         Returns
         -------
-        TODO
+        tuple
+            (slope, intercept) of phase data
 
         """
         if hasattr(self.data, "phase_rad") or hasattr(self.data, "phase_deg"):
@@ -142,3 +143,4 @@ class EvalLF(object):
         model = LinearRegression().fit(time, unwrapped)
         self.quality.phase_slope = model.coef_
         self.quality.phase_yint = model.intercept_
+        return (self.quality.phase_slope, self.quality.phase_yint)
