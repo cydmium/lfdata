@@ -1,3 +1,5 @@
+![LF Logo](lf_logo.png)
+
 # LF Data
 
 This project provides a set of useful tools for interacting with data taken from
