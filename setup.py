@@ -23,6 +23,6 @@ setup(
         "Development Status :: 2 - Pre-Alpha",
         "Intended Audience :: Science/Research",
     ],
-    install_requires=["scipy", "numpy", "sklearn"],
+    install_requires=["scipy", "numpy", "sklearn", "geographiclib"],
     extras_require={"dev": ["twine"]},
 )
