@@ -9,6 +9,8 @@ LF AWESOME receiver to a python dictionary.
 from datetime import datetime
 import numpy as np
 from scipy.io import loadmat
+import lf.txrx as txrx
+import lf.utils
 
 
 class LFData(object):
@@ -106,10 +108,11 @@ class LFData(object):
         Parameters
         ----------
         mat_files : list of strings, optional
-            Two mat files correseponding to amplitude and phase of a path
+            Four mat files [N/S Amp, N/S Phase, E/W Amp, E/W Phase]
         data_dicts : list of dictionaries, optional
-            Two dictionaries corresponding to amplitude and phase of a path
+            Four dictionaries [N/S Amp, N/S Phase, E/W Amp, E/W Phase]
         """
+        self.rotated = False
         if mat_files is not None:
             if data_dicts is not None:
                 print(
@@ -125,16 +128,20 @@ class LFData(object):
         Parameters
         ----------
         mat_files : list of strings, optional
-            Two mat files correseponding to amplitude and phase of a path
+            Four mat files [N/S Amp, N/S Phase, E/W Amp, E/W Phase]
 
         Returns
         -------
         None
 
         """
-        if len(mat_files) != 2:
+        if len(mat_files) != 4:
             raise ValueError("Only two mat_files are accepted.")
-        data = [load_rx_data(mat_files[0]), load_rx_data(mat_files[1])]
+        data = {
+            "NS": [load_rx_data(mat_files[0]), load_rx_data(mat_files[1])],
+            "EW": [load_rx_data(mat_files[2]), load_rx_data(mat_files[3])],
+        }
+
         self.combine_data(data)
 
     def load_dicts(self, data_dicts):
@@ -150,9 +157,13 @@ class LFData(object):
         None
 
         """
-        if len(data_dicts) != 2:
+        if len(data_dicts) != 4:
             raise ValueError("Only two data_dicts are accepted.")
-        self.combine_data(data_dicts)
+        data = {
+            "NS": [data_dicts[0], data_dicts[1]],
+            "EW": [data_dicts[2], data_dicts[3]],
+        }
+        self.combine_data(data)
 
     def combine_data(self, data_list):
         """ Combine amplitude and phase data into a single data structure
@@ -174,7 +185,6 @@ class LFData(object):
             "altitude",
             "Fs",
             "gps_quality",
-            "adc_channel_number",
             "adc_sn",
             "adc_type",
             "antenna_bearings",
@@ -193,43 +203,90 @@ class LFData(object):
         ]
         for key in matched_keys:
             try:
-                if data_list[0][key] != data_list[1][key]:
+                values = [
+                    data_list[ch][entry][key]
+                    for ch in ["NS", "EW"]
+                    for entry in [0, 1]
+                ]
+                if not all(v == values[0] for v in values):
                     raise ValueError(f"Data differs in {key}")
             except KeyError:
                 print(f"Unable to verify {key} values due to missing key")
         try:
-            if data_list[0]["is_amp"] == data_list[1]["is_amp"]:
-                raise ValueError(
-                    f"Duplicate {'amplitude' if data_list[0]['is_amp'] else 'phase'}."
-                )
+            if not (
+                data_list["NS"][0]["is_amp"]
+                == data_list["EW"][0]["is_amp"]
+                == 1
+            ):
+                raise ValueError("Input data is not in the correct order")
+            elif not (
+                data_list["NS"][1]["is_amp"]
+                == data_list["EW"][1]["is_amp"]
+                == 0
+            ):
+                raise ValueError("Input data is not in the correct order")
         except KeyError:
-            print(
-                "Unable to verify duplicate amplitude or phase values due to missing key"
-            )
+            print("Unable to verify data order due to missing 'is_amp' key")
 
         # Setup class variables for each entry in dictionary
-        for key, value in data_list[0].items():
+        for key, value in data_list["NS"][0].items():
             if key == "data":
                 # Split data into amplitude and phase data
                 setattr(
                     self,
-                    "amp_lin",
-                    np.array(value).squeeze()
-                    if data_list[0]["is_amp"]
-                    else np.array(data_list[1]["data"]).squeeze(),
-                )
-                setattr(
-                    self,
-                    "phase_deg",
-                    np.array(value).squeeze()
-                    if data_list[1]["is_amp"]
-                    else np.array(data_list[1]["data"]).squeeze(),
+                    "data",
+                    {
+                        "NS": np.array(
+                            [
+                                data_list["NS"][0]["data"].squeeze(),
+                                data_list["NS"][1]["data"].squeeze(),
+                            ]
+                        ),
+                        "EW": np.array(
+                            [
+                                data_list["EW"][0]["data"].squeeze(),
+                                data_list["EW"][1]["data"].squeeze(),
+                            ]
+                        ),
+                    },
                 )
             elif key == "is_amp":
                 # Skip is_amp key
                 continue
             else:
                 setattr(self, key, value)
+
+        # Rotate data to get az and radial components
+        if not self.rotated:
+            self.rotate_data()
+
+    def rotate_data(self, correction_val=0.0):
+        """ Rotate data to be in az and radial components
+
+        Parameters
+        ----------
+        correction_val : float, optional
+            Float containing a correction factor for rotation
+
+        Returns
+        -------
+        None
+
+        """
+        amp_ns, phase_ns = self.data["NS"]
+        amp_ew, phase_ew = self.data["EW"]
+        b_ns = amp_ns * np.exp(1j * np.deg2rad(phase_ns))
+        b_ew = amp_ew * np.exp(1j * np.deg2rad(phase_ew))
+        az = lf.utils.get_azimuth(self.rx, self.call_sign) - correction_val
+        b_r, b_az = lf.utils.rot_az(az).dot([b_ns, -b_ew])
+        amp_r = np.abs(b_r)
+        phase_r = np.rad2deg(np.angle(b_r))
+        amp_az = np.abs(b_az)
+        phase_az = np.rad2deg(np.angle(b_az))
+        self.data["R"] = np.array([amp_r, phase_r])
+        self.data["Az"] = np.array([amp_az, phase_az])
+        self.rotated = True
+        return self.data
 
     def to_real_imag(self, remove_amp_phase=False):
         """ Calculates the real and imaginary components of the data
@@ -504,6 +561,14 @@ def load_rx_data(mat_file, variables=None, file_check=True):
             data.pop("start_minute"),
             data.pop("start_second"),
         )
+
+    # Set Rx Abbreviation
+    try:
+        data["rx"] = txrx.site_mapping_inv[data["station_name"]]
+    except KeyError:
+        raise ValueError("Unknown Receiver")
+    except AttributeError:
+        raise ValueError("Receiver not specified")
 
     return data
 
