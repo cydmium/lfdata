@@ -20,7 +20,7 @@ class DataQuality(object):
         metrics = [
             "total_time_off",
             "longest_time_off",
-            "time_under_threshold",
+            "total_daytime_off" "time_under_threshold",
             "full_day",
             "tx_on",
             "phase_slope",
@@ -68,27 +68,35 @@ class EvalLF(object):
 
         Returns
         -------
-        TODO
+        None
 
         """
-        if hasattr(self.data, "amp_lin"):
-            amp_data = self.data.amp_lin
-        elif hasattr(self.data, "amp_db"):
-            amp_data = self.data.amp_db
-        else:
-            self.data.to_amp_phase()
-            amp_data = self.data.amp_lin
-        if hasattr(self.data, "phase_deg"):
-            phase_data = self.data.phase_deg
-        elif hasattr(self.data, "phase_rad"):
-            phase_data = self.data.phase_rad
-        off_time_amp = lf.utils.repeatedNans(amp_data) / self.data.Fs
-        off_time_phase = lf.utils.repeatedNans(phase_data) / self.data.Fs
-        if off_time_amp != off_time_phase:
+        amp_data = self.data.data["Az"][0]
+        phase_data = self.data.data["Az"][1]
+        try:
+            off_time_amp = lf.utils.repeatedNans(amp_data) / self.data.Fs
+        except TypeError:
+            off_time_amp = 0.0
+        try:
+            off_time_phase = lf.utils.repeatedNans(phase_data) / self.data.Fs
+        except TypeError:
+            off_time_phase = 0.0
+        time = np.linspace(0, 86400, 86400 * self.data.Fs)
+        # Define daytime as 9 AM to 5 PM EST = 14-22 UT
+        daytime = np.logical_and(time >= 50400, time <= 79200)
+        try:
+            off_daytime_phase = (
+                lf.utils.repeatedNans(phase_data[daytime]) / self.data.Fs
+            )
+        # Type error if repeatedNans finds no Nans
+        except TypeError:
+            off_daytime_phase = 0.0
+        if np.any(off_time_amp != off_time_phase):
             print("Amplitude and phase data differ in off time. Please Verify")
         else:
             self.quality.total_time_off = np.sum(off_time_phase)
-            self.quality.max_time_off = np.max(off_time_phase)
+            self.quality.longest_time_off = np.max(off_time_phase)
+            self.quality.total_daytime_off = np.sum(off_daytime_phase)
 
     def eval_amp(self):
         """ Evaluate the amplitude data
@@ -102,16 +110,18 @@ class EvalLF(object):
             threshold = float(self.config["EvalInfo"]["AmplitudeThreshold"])
         else:
             threshold = 10.0
-        if hasattr(self.data, "amp_lin") or hasattr(self.data, "amp_db"):
-            data = self.data.to_db()
-        else:
-            self.data.to_amp_phase()
-            data = self.data.to_db()
+        data = 20 * np.log10(self.data.data["Az"][0])
         # Remove Nans
         data = data[np.invert(np.isnan(data))]
         low_signal = data[data < threshold]
         time_under_threshold = len(low_signal) / self.data.Fs
         self.quality.time_under_threshold = time_under_threshold
+        if np.isclose([time_under_threshold], [28800], rtol=0, atol=7200)[0]:
+            self.quality.tx_on = False
+        elif time_under_threshold > 28800:
+            self.quality.tx_on = False
+        else:
+            self.quality.tx_on = True
         return self.quality.time_under_threshold
 
     def eval_phase(self):
@@ -123,11 +133,7 @@ class EvalLF(object):
             (slope, intercept) of phase data
 
         """
-        if hasattr(self.data, "phase_rad") or hasattr(self.data, "phase_deg"):
-            data = self.data.to_deg()
-        else:
-            self.data.to_amp_phase()
-            data = np.copy(self.data.to_deg())
+        data = np.copy(self.data.data["Az"][1])
         # Replace Nans with value on either side
         idx = lf.utils.findNans(data)
         if idx is not None:
@@ -141,6 +147,6 @@ class EvalLF(object):
         time = np.linspace(0, 24, len(data)).reshape((-1, 1))
         unwrapped = np.unwrap(data)
         model = LinearRegression().fit(time, unwrapped)
-        self.quality.phase_slope = model.coef_
+        self.quality.phase_slope = model.coef_[0]
         self.quality.phase_yint = model.intercept_
         return (self.quality.phase_slope, self.quality.phase_yint)
