@@ -73,6 +73,11 @@ class EvalLF(object):
         """
         amp_data = self.data.data["Az"][0]
         phase_data = self.data.data["Az"][1]
+        # Check for 86400 seconds worth of data
+        if len(amp_data) != 86400 * self.data.Fs:
+            self.quality.full_day = False
+        else:
+            self.quality.full_day = True
         try:
             off_time_amp = lf.utils.repeatedNans(amp_data) / self.data.Fs
         except TypeError:
