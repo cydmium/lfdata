@@ -1,11 +1,86 @@
-""" Provides locate_mat function
+""" Provides Crawler and DateRange classes as well as locate_mat function
 
+The Crawler class provides functionality for locating and evaluating large
+ranges of lf data in a single class.
+The DateRange class allows iterating through dates at various time intervals.
 locate_mat determines the file paths for the .mat files correesponding to a
 single path on a single day.
 """
 
 import os
 import lf.txrx
+import lf.data
+from datetime import datetime, timedelta
+
+
+class Crawler(object):
+
+    """ Data crawler to sift through all the LF data"""
+
+    def __init__(
+        self,
+        data_path,
+        start,
+        stop=datetime.today(),
+        txs=["NAA", "NML", "NLK"],
+        rxs=["AR", "BD", "BX", "BW", "LP", "DA", "OX"],
+        config=None,
+    ):
+        """ Initialize the date range and paths to check
+
+        Parameters
+        ----------
+        data_path : str
+            Path to receiver data
+        start : datetime
+            Start date of interest range
+        stop : datetime, optional
+            Stop date of interest range
+        txs : list of str, optional
+            List containing the transmitters of interest
+        rxs : list of str, optional
+            List containing the receivers of interest
+
+        """
+        self._data_path = data_path
+        self._start = start
+        self._stop = stop
+        self._txs = txs
+        self._rxs = rxs
+        self._config = config
+
+    def crawl(self, step=timedelta(days=1), resolution="low"):
+        """ Sift through LF Data
+
+        Parameters
+        ----------
+        step : timedelta, optional
+            How much time to increment between checks
+        resolution : {"low", "high"}, optional
+            Data resolution of interest
+
+        Returns
+        -------
+        None
+
+        """
+        self.paths = {}
+        for day in DateRange(self._start, self._stop, step):
+            self.paths[day] = {}
+            for tx in self._txs:
+                self.paths[day][tx] = []
+                for rx in self._rxs:
+                    mats = locate_mat(self._data_path, day, tx, rx, resolution)
+                    if mats is not None:
+                        data = lf.data.rx.LFData(mat_files=mats)
+                        qual = lf.data.rxquality.EvalLF(data, self._config)
+                        # qual.eval_amp()
+                        # qual.eval_phase()
+                        # qual.eval_receiver()
+                        if qual.quality.get_quality():
+                            self.paths[day][tx].append(rx)
+
+
 class DateRange:
 
     """ Iterator that increments dates"""
@@ -87,7 +162,7 @@ def locate_mat(data_path, date, tx, rx, resolution):
     date_str = date.strftime("%Y_%m_%d")
     filenames = [
         os.path.join(
-            data_path,
+            os.path.expanduser(data_path),
             receiver,
             date_str,
             "".join(
@@ -98,6 +173,7 @@ def locate_mat(data_path, date, tx, rx, resolution):
                     "_10",
                     str(ch),
                     amp_phase,
+                    ".mat",
                 ]
             ),
         )
