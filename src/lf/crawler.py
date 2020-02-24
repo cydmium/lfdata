@@ -6,6 +6,53 @@ single path on a single day.
 
 import os
 import lf.txrx
+class DateRange:
+
+    """ Iterator that increments dates"""
+
+    def __init__(self, start, stop=datetime.today(), step=timedelta(days=1)):
+        """ Iterate from start date to stop date with time step delta
+
+        Parameters
+        ----------
+        start : datetime
+            Oldest time of interest
+        stop : datetime, optional
+            Newest time of interest (inclusive)
+        step : timedelta, optional
+            How much to increment in each loop
+
+        """
+
+        self._date = start
+        self._stop = stop
+        self._step = step
+
+    def __iter__(self):
+        """ Iterator
+        Returns
+        -------
+        DateRange
+            returns itself
+
+        """
+        return self
+
+    def __next__(self):
+        """ Calculate next date
+
+        Returns
+        -------
+        datetime
+            Current time plus step
+
+        """
+        date = self._date
+        self._date += self._step
+        if date > self._stop:
+            raise StopIteration
+        else:
+            return date
 
 
 def locate_mat(data_path, date, tx, rx, resolution):
