@@ -6,9 +6,14 @@ data_loader provides a quick way of converting the .mat files provided by the
 LF AWESOME receiver to a python dictionary.
 """
 
-from datetime import datetime
 import numpy as np
+from datetime import datetime
+from datetime import timedelta
+from datetime import time
 from scipy.io import loadmat
+import matplotlib.pyplot as plt
+from matplotlib import rcParams
+from matplotlib.dates import DateFormatter
 import lf.txrx as txrx
 import lf.utils
 
@@ -270,6 +275,67 @@ class LFData(object):
         self.data["Az"] = np.array([amp_az, phase_az])
         self.rotated = True
         return self.data
+
+    def plot(self):
+        """ Plot the data
+        Returns
+        -------
+        None
+
+        """
+        rcParams.update({"figure.autolayout": True})
+        axis_time = [
+            self.start_time + timedelta(seconds=i / self.Fs)
+            for i in range(len(self.data["NS"][0]))
+        ]
+        if "R" in self.data.keys() and "Az" in self.data.keys():
+            fig, axes = plt.subplots(2, 4, figsize=(18, 8), sharex=True)
+            axes[1, 0].plot(axis_time, 20 * np.log10(self.data["Az"][0]))
+            _, _, ymin, ymax = axes[1, 0].axis()
+            axes[1, 0].set_xlim([axis_time[0], axis_time[-1]])
+            axes[1, 0].set_ylabel("Amplitude [dB]")
+            axes[1, 0].set_title("Az Amplitude")
+            axes[1, 1].plot(axis_time, self.data["Az"][1])
+            _, _, ymin, ymax = axes[1, 1].axis()
+            axes[1, 1].set_xlim([axis_time[0], axis_time[-1]])
+            axes[1, 1].set_ylabel("Amplitude [dB]")
+            axes[1, 1].set_title("Az Phase")
+            axes[1, 2].plot(axis_time, 20 * np.log10(self.data["R"][0]))
+            _, _, ymin, ymax = axes[1, 0].axis()
+            axes[1, 2].set_xlim([axis_time[0], axis_time[-1]])
+            axes[1, 2].set_ylabel("Amplitude [dB]")
+            axes[1, 2].set_title("Radial Amplitude")
+            axes[1, 3].plot(axis_time, self.data["R"][1])
+            _, _, ymin, ymax = axes[1, 1].axis()
+            axes[1, 3].set_xlim([axis_time[0], axis_time[-1]])
+            axes[1, 3].set_ylabel("Amplitude [dB]")
+            axes[1, 3].set_title("Radial Phase")
+        else:
+            fig, axes = plt.subplots(1, 4, figsize(18, 4), sharex=True)
+        axes[0, 0].plot(axis_time, 20 * np.log10(self.data["NS"][0]))
+        _, _, ymin, ymax = axes[1, 0].axis()
+        axes[0, 0].set_xlim([axis_time[0], axis_time[-1]])
+        axes[0, 0].set_ylabel("Amplitude [dB]")
+        axes[0, 0].set_title("N/S Amplitude")
+        axes[0, 1].plot(axis_time, self.data["NS"][1])
+        _, _, ymin, ymax = axes[1, 1].axis()
+        axes[0, 1].set_xlim([axis_time[0], axis_time[-1]])
+        axes[0, 1].set_ylabel("Amplitude [dB]")
+        axes[0, 1].set_title("N/S Phase")
+        axes[0, 2].plot(axis_time, 20 * np.log10(self.data["EW"][0]))
+        _, _, ymin, ymax = axes[1, 0].axis()
+        axes[0, 2].set_xlim([axis_time[0], axis_time[-1]])
+        axes[0, 2].set_ylabel("Amplitude [dB]")
+        axes[0, 2].set_title("E/W Amplitude")
+        axes[0, 3].plot(axis_time, self.data["EW"][1])
+        _, _, ymin, ymax = axes[1, 1].axis()
+        axes[0, 3].set_xlim([axis_time[0], axis_time[-1]])
+        axes[0, 3].set_ylabel("Amplitude [dB]")
+        axes[0, 3].set_title("E/W Phase")
+        axes[0, 0].xaxis.set_major_formatter(DateFormatter("%H"))
+        for axis in axes[-1, :]:
+            axis.set_xlabel("Time [UT]")
+        plt.show()
 
 
 def load_rx_data(mat_file, variables=None, file_check=True):
