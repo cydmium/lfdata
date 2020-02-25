@@ -6,10 +6,12 @@ All dates listed follow the ISO standard of yyyy-mm-dd.
 
 ## Unreleased
 ### Added
-- Crawler.crawl method
+- Crawler.crawl() method
     - Implement ability to crawl through all lf data to locate "good" data
 - DateRange iterator
     - Iterate through dates similar to how the built-in range iterator functions
+- LFData.plot()
+    - Plot amplitude and phase data
 
 ### Changed
 - LFData.load_mats now requires 4 mat files (amplitude/phase for both N/S and
