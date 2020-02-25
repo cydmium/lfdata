@@ -324,6 +324,7 @@ class LFData(object):
         for row in axes:
             for axis in row:
                 axis.axvspan(daytime[0], daytime[1], alpha=0.3, color="grey")
+                axis.grid()
         for axis in axes[-1, :]:
             axis.set_xlabel("Time [UT]")
         plt.show()
