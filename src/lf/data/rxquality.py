@@ -29,6 +29,32 @@ class DataQuality(object):
         for metric in metrics:
             setattr(self, metric, None)
 
+    def get_quality(self, config=None):
+        """ Take the current quality data and determine if that is good enough
+
+        Returns
+        -------
+        bool:
+            True is good enough, False is not
+
+        """
+        return True
+        if self.total_time_off > 86400:
+            return False
+        elif self.longest_time_off > 86400:
+            return False
+        elif self.total_daytime_off > 86400:
+            return False
+        elif self.time_under_threshold > 86400:
+            return False
+        elif not self.full_day:
+            return False
+        elif not self.tx_on:
+            return False
+        elif self.phase_slope > 0:
+            return False
+        return True
+
 
 class EvalLF(object):
 
