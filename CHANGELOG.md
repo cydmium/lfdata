@@ -10,8 +10,10 @@ All dates listed follow the ISO standard of yyyy-mm-dd.
     - Implement ability to crawl through all lf data to locate "good" data
 - DateRange iterator
     - Iterate through dates similar to how the built-in range iterator functions
-- LFData.plot()
+- LFData.plot() method
     - Plot amplitude and phase data
+- DataQuality.get_quality() method
+    - Returns whether the data is "good" according to some rules
 
 ### Changed
 - LFData.load_mats now requires 4 mat files (amplitude/phase for both N/S and
