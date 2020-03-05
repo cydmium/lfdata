@@ -14,12 +14,16 @@ All dates listed follow the ISO standard of yyyy-mm-dd.
     - Plot amplitude and phase data
 - DataQuality.get_quality() method
     - Returns whether the data is "good" according to some rules
+- DataQuality now contains significantly more quality metrics [David Richardson
+  <drichardson42@gatech.edu>]
+    - Noise metrics
+    - Daytime specific metrics
 
 ### Changed
 - LFData.load_mats now requires 4 mat files (amplitude/phase for both N/S and
   E/W channels) [David Richardson <drichardson42@gatech.edu>]
     - Allow the LFData class to manage all of the data measured by a receiver
-- LFDate.load_dicts now requires 4 dictionaries (amplitude/phase for both N/S
+- LFData.load_dicts now requires 4 dictionaries (amplitude/phase for both N/S
   and E/W channels) [David Richardson <drichardson42@gatech.edu>]
     - Allow the LFData class to manage all of the data measured by a receiver
 
