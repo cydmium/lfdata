@@ -76,13 +76,13 @@ class Crawler(object):
                     if mats is not None:
                         data = lf.data.rx.LFData(mat_files=mats)
                         qual = lf.data.rxquality.EvalLF(data, self._config)
-                        qual.eval_amp()
-                        qual.eval_phase()
-                        qual.eval_receiver()
                         print()
                         print(
                             f"Evaluating {tx}-{rx} on {day.strftime('%b %d, %Y')}"
                         )
+                        qual.eval_amp()
+                        qual.eval_phase()
+                        qual.eval_receiver()
                         if qual.quality.get_quality():
                             print(f"Data is Good!")
                             self.paths[day][tx].append(rx)

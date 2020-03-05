@@ -47,6 +47,18 @@ tx_dict = {
     "JJI": [32.04, 130.81, 22.2e3],
     "DHO": [53.08, 7.61, 23.4e3],
 }
+# 0s correspond to unknown day of week
+# Mon=1, Tue=2, Wed=3, Thur=4, Fri=5, Sat=6, Sun=7
+tx_off = {
+    "NAA": 1,
+    "NML": 2,
+    "NLK": 4,
+    "HW3": 0,
+    "NAU": 0,
+    "NPM": 0,
+    "NRK": 0,
+    "NWC": 0,
+}
 rx_dict = {
     "AR": [18.3485103, -66.7502039],
     "BX": [31.877906, -82.362481],

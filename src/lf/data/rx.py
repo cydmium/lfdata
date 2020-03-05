@@ -427,6 +427,8 @@ def load_rx_data(mat_file, variables=None, file_check=True):
         raise ValueError("Unknown Receiver")
     except AttributeError:
         raise ValueError("Receiver not specified")
+    # Set Tx Abbreviate to call sign
+    data["tx"] = data["call_sign"]
 
     return data
 
