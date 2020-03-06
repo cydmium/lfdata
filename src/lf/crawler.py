@@ -43,6 +43,8 @@ class Crawler(object):
 
         """
         self._data_path = data_path
+        if not os.path.isdir(os.path.expanduser(data_path)):
+            raise OSError("Directory does not exist!")
         self._start = start
         self._stop = stop
         self._txs = txs
