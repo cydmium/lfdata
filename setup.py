@@ -30,6 +30,7 @@ setup(
         "geographiclib",
         "pandas",
         "pysolar",
+        "matplotlib",
     ],
     extras_require={"dev": ["twine"]},
 )
