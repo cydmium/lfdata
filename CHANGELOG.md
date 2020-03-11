@@ -18,6 +18,11 @@ All dates listed follow the ISO standard of yyyy-mm-dd.
   <drichardson42@gatech.edu>]
     - Noise metrics
     - Daytime specific metrics
+- tx_rx_midpoint to lf.utils [David Richardson <drichardson42@gatech.edu>]
+    - Calculates the latitude and longitude at the midpoint between a receiver
+      and transmitter
+- solar_max_time to lf.utils [David Richardson <drichardson42@gatech.edu>]
+    - Calculates the time at which the sun is most overhead a lat, lon point
 
 ### Changed
 - LFData.load_mats now requires 4 mat files (amplitude/phase for both N/S and

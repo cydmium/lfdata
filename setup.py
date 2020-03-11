@@ -23,6 +23,13 @@ setup(
         "Development Status :: 2 - Pre-Alpha",
         "Intended Audience :: Science/Research",
     ],
-    install_requires=["scipy", "numpy", "sklearn", "geographiclib", "pandas"],
+    install_requires=[
+        "scipy",
+        "numpy",
+        "sklearn",
+        "geographiclib",
+        "pandas",
+        "pysolar",
+    ],
     extras_require={"dev": ["twine"]},
 )
