@@ -23,6 +23,7 @@ class DataQuality(object):
             "longest_time_off",
             "total_daytime_off",
             "longest_daytime_off",
+            "missing_midday",
             "total_time_under_threshold",
             "longest_time_under_threshold",
             "total_daytime_under_threshold",
@@ -57,8 +58,13 @@ class DataQuality(object):
             print("Missing at least 2 hour of daytime data")
             quality = False
         if self.longest_daytime_off > 900:
-            print("Fifteen consecutive minutes of missing daytime data")
-            quality = False
+            if self.missing_midday:
+                print("Fifteen consecutive minutes of missing daytime data")
+                quality = False
+            else:
+                print(
+                    "Fifteen consecutive minutes of missing daytime data, but midday exists"
+                )
         if self.total_daytime_under_threshold > 3600:
             print("One Daytime Hour under threshold")
             quality = False
@@ -129,6 +135,12 @@ class EvalLF(object):
         """
         amp_data = self.data.data["Az"][0]
         phase_data = self.data.data["Az"][1]
+        self.quality.missing_midday = False
+        lat, lon = lf.utils.tx_rx_midpoint(self.data.tx, self.data.rx)
+        max_solar = lf.utils.solar_max_time(lat, lon, self.data.start_time)
+        max_time = (
+            max_solar.hour * 3600 + max_solar.minute * 60 + max_solar.second
+        )
         # Check for 86400 seconds worth of data
         if len(amp_data) != 86400 * self.data.Fs:
             self.quality.full_day = False
@@ -145,6 +157,9 @@ class EvalLF(object):
         time = np.linspace(0, 86400, 86400 * self.data.Fs)
         # Define daytime as 9 AM to 5 PM EST = 14-22 UT
         daytime = np.logical_and(time >= 50400, time <= 79200)
+        midday = np.logical_and(time >= max_time - 600, time <= max_time + 600)
+        if any(np.isnan(phase_data[midday])):
+            self.quality.missing_midday = True
         try:
             off_daytime_phase = (
                 lf.utils.repeatedNans(phase_data[daytime]) / self.data.Fs
@@ -206,7 +221,6 @@ class EvalLF(object):
         dow = self.data.start_time.isoweekday()
         if dow == lf.txrx.tx_off[self.data.tx]:
             print("Scheduled Maintenance")
-            self.quality.tx_on = False
         elif np.isclose(
             [self.quality.total_daytime_under_threshold],
             [28800],
