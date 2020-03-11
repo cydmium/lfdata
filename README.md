@@ -27,7 +27,7 @@ variables = ["station_name", "call_sign", "data"]
 data = lf.data.rx.load_rx_data("path_to_mat_file", variables)
 
 # Create an LFData object from two mat files or dictionaries
-mat_files = ["amplitude.mat", "phase.mat"]
+mat_files = ["amplitudeNS.mat", "phaseNS.mat", "amplitudeEW.mat", "phaseEW.mat"]
 data = lf.data.rx.LFData(mat_files)
 
 # Evaluate the quality of your data with the EvalLF object

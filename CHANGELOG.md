@@ -4,6 +4,49 @@ The format for this changelog is based on [Keep a Changelog](https://keepachange
 and this project adheres to (mostly) [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 All dates listed follow the ISO standard of yyyy-mm-dd.
 
+## Unreleased
+### Added
+- Crawler.crawl() method
+    - Implement ability to crawl through all lf data to locate "good" data
+- DateRange iterator
+    - Iterate through dates similar to how the built-in range iterator functions
+- LFData.plot() method
+    - Plot amplitude and phase data
+- DataQuality.get_quality() method
+    - Returns whether the data is "good" according to some rules
+- DataQuality now contains significantly more quality metrics [David Richardson
+  <drichardson42@gatech.edu>]
+    - Noise metrics
+    - Daytime specific metrics
+- tx_rx_midpoint to lf.utils [David Richardson <drichardson42@gatech.edu>]
+    - Calculates the latitude and longitude at the midpoint between a receiver
+      and transmitter
+- solar_max_time to lf.utils [David Richardson <drichardson42@gatech.edu>]
+    - Calculates the time at which the sun is most overhead a lat, lon point
+
+### Changed
+- LFData.load_mats now requires 4 mat files (amplitude/phase for both N/S and
+  E/W channels) [David Richardson <drichardson42@gatech.edu>]
+    - Allow the LFData class to manage all of the data measured by a receiver
+- LFData.load_dicts now requires 4 dictionaries (amplitude/phase for both N/S
+  and E/W channels) [David Richardson <drichardson42@gatech.edu>]
+    - Allow the LFData class to manage all of the data measured by a receiver
+
+
+### Removed
+- LFData.to_amp_phase [David Richardson <drichardson42@gatech.edu>]
+    - With the changes to multi-channel this function no longer makes sense
+- LFData.to_real_imag [David Richardson <drichardson42@gatech.edu>]
+    - With the changes to multi-channel this function no longer makes sense
+- LFData.to_db [David Richardson <drichardson42@gatech.edu>]
+    - With the changes to multi-channel this function no longer makes sense
+- LFData.to_lin [David Richardson <drichardson42@gatech.edu>]
+    - With the changes to multi-channel this function no longer makes sense
+- LFData.to_rad [David Richardson <drichardson42@gatech.edu>]
+    - With the changes to multi-channel this function no longer makes sense
+- LFData.to_deg [David Richardson <drichardson42@gatech.edu>]
+    - With the changes to multi-channel this function no longer makes sense
+
 ## [0.0.5] - 2020-02-17
 Note: v0.0.4 was skipped due to a packaging error that prevented the 0.0.4
 upload to pypi. v0.0.5 is what v0.0.4 would have been.

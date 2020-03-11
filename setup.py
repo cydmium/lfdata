@@ -5,7 +5,7 @@ with open("README.md", "r") as f:
 
 setup(
     name="lf",
-    version="0.0.5",
+    version="0.1.0",
     description="Tools for interacting with GT's LF AWESOME Receiver data",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -23,6 +23,13 @@ setup(
         "Development Status :: 2 - Pre-Alpha",
         "Intended Audience :: Science/Research",
     ],
-    install_requires=["scipy", "numpy", "sklearn"],
+    install_requires=[
+        "scipy",
+        "numpy",
+        "sklearn",
+        "geographiclib",
+        "pandas",
+        "pysolar",
+    ],
     extras_require={"dev": ["twine"]},
 )
