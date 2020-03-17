@@ -2,7 +2,7 @@
 receivers
 """
 site_mapping = {
-    "AR": "Arecibo",
+    "AO": "Arecibo",
     "BX": "Baxley",
     "BW": "Briarwood",
     "BD": "Burden",
@@ -16,7 +16,8 @@ site_mapping = {
     "TK": "Toolik",
 }
 site_mapping_inv = {
-    "Arecibo": "AR",
+    "Arecibo": "AO",
+    "Arecibo, Puerto Rico": "AO",
     "Baxley": "BX",
     "Briarwood": "BW",
     "Briarwood Academy": "BW",
@@ -60,7 +61,7 @@ tx_off = {
     "NWC": 0,
 }
 rx_dict = {
-    "AR": [18.3485103, -66.7502039],
+    "AO": [18.3485103, -66.7502039],
     "BX": [31.877906, -82.362481],
     "BW": [33.427531, -82.579384],
     "BD": [37.324386, -96.756617],

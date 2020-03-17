@@ -23,7 +23,7 @@ class Crawler(object):
         start,
         stop=datetime.today(),
         txs=["NAA", "NML", "NLK"],
-        rxs=["AR", "BD", "BX", "BW", "LP", "DA", "OX"],
+        rxs=["AO", "BD", "BX", "BW", "LP", "DA", "OX"],
         config=None,
     ):
         """ Initialize the date range and paths to check
