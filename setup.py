@@ -31,6 +31,7 @@ setup(
         "pandas",
         "pysolar",
         "matplotlib",
+        "datetime",
     ],
     extras_require={"dev": ["twine"]},
 )
