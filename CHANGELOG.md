@@ -11,6 +11,8 @@ All dates listed follow the ISO standard of yyyy-mm-dd.
     - Allows creation of a table of calibration values
 - Added cal_lut to calibration_lut.py [David Richardson <drichardson42@gatech.edu>]
     - Provides a look up table of receiver calibration dates and directory names
+- Added LFData.calibrate method [David Richardson <drichardson42@gatech.edu>]
+    - If a cal_table is passed to LFData, it can now calibrate its data
 
 ### Changed
 - Fixed Arecibo's callsign (AR->AO) [David Richardson <drichardson42@gatech.edu>]
