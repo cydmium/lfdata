@@ -2,7 +2,8 @@ import os
 import pickle
 import errno
 import numpy as np
-from calibration_lut import cal_lut
+import lf.txrx
+from lf.calibration_lut import cal_lut
 from scipy.io import loadmat
 
 
@@ -16,17 +17,20 @@ class Calibration(object):
         Parameters
         ----------
         cal_table_path : str, optional
-            Path to existing calibration table
+            Path to existing calibration table or desired save location
         cal_dir : str, optional
             Path to directory containing calibration directories
 
         """
         self.cal_table_path = cal_table_path
         self.cal_dir = cal_dir
+        self.freq = np.arange(0, 200) * 2.50244 * 1e3
 
     def create_table(self):
         """ Generate the calibration table
         """
+        if not self.cal_dir:
+            raise RuntimeError("Calibration directory not provided")
         table = {}
         for call_sign in cal_lut:
             table[call_sign] = {}
@@ -46,6 +50,56 @@ class Calibration(object):
                 )[:, 1]
         self.table = table
         return self.table
+
+    def get_cal_date(self, rx, date):
+        """ Determine which calibration to use
+
+        Parameters
+        ----------
+        rx : str
+            Receiver of interest
+        date : datetime.datetime
+            Date of measurements
+
+        Returns
+        -------
+        datetime.date
+            Date of calibration
+
+        """
+        # List all calibration dates
+        times = [cal_date for cal_date in self.table[rx]]
+        times.sort(reverse=True)
+        cal_of_interest = np.argmax([date.date() >= time for time in times])
+        return times[cal_of_interest]
+
+    def cal_data(self, data, rx, tx, date):
+        """ Calibrate lf data
+
+        Parameters
+        ----------
+        data : dict
+            NS and EW amplitude and phase
+        rx : str
+            receiver of interest
+        tx : str
+            transmitter of interest
+        date : datetime.date
+            date of measurement
+
+        Returns
+        -------
+        dict
+            calibrated data
+
+        """
+        cal_date = self.get_cal_date(rx, date)
+        ns_vec = self.table[rx][cal_date]["cal_num_ns"]
+        ew_vec = self.table[rx][cal_date]["cal_num_ew"]
+        fc = lf.txrx.tx_dict[tx][2]
+        data["NS"][0] *= np.interp(fc, self.freq, ns_vec)
+        data["EW"][0] *= np.interp(fc, self.freq, ew_vec)
+        return data
 
     def save_table(self):
         """ Save the calibration table

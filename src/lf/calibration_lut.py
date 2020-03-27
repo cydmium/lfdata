@@ -4,7 +4,7 @@
 from datetime import date
 
 cal_lut = {
-    "AA": {date(2018, 5, 25): "BWDiffTest_2018_05"},
+    "AA": {date(2018, 5, 25): "BriarwoodDiffTest_2018_05"},
     "AO": {date(2017, 7, 19): "Arecibo_2017_07"},
     "BX": {
         date(2016, 1, 6): "Baxley_2016_01",
