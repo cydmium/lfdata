@@ -4,15 +4,34 @@ The format for this changelog is based on [Keep a Changelog](https://keepachange
 and this project adheres to (mostly) [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 All dates listed follow the ISO standard of yyyy-mm-dd.
 
+
 ## Unreleased
 ### Added
-- Crawler.crawl() method
+- Added Calibration class to lf.calibration [David Richardson <drichardson42@gatech.edu>]
+    - Allows creation of a table of calibration values
+- Added cal_lut to calibration_lut.py [David Richardson <drichardson42@gatech.edu>]
+    - Provides a look up table of receiver calibration dates and directory names
+
+### Changed
+- Fixed Arecibo's callsign (AR->AO) [David Richardson <drichardson42@gatech.edu>]
+
+### Removed
+
+
+## [0.1.1] - 2020-03-11
+### Changed
+-  Added matplotlib dependency [David Richardson <drichardson42@gatech.edu>]
+
+
+## [0.1.0] - 2020-03-11
+### Added
+- Crawler.crawl() method [David Richardson <drichardson42@gatech.edu>]
     - Implement ability to crawl through all lf data to locate "good" data
-- DateRange iterator
+- DateRange iterator [David Richardson <drichardson42@gatech.edu>]
     - Iterate through dates similar to how the built-in range iterator functions
-- LFData.plot() method
+- LFData.plot() method [David Richardson <drichardson42@gatech.edu>]
     - Plot amplitude and phase data
-- DataQuality.get_quality() method
+- DataQuality.get_quality() method [David Richardson <drichardson42@gatech.edu>]
     - Returns whether the data is "good" according to some rules
 - DataQuality now contains significantly more quality metrics [David Richardson
   <drichardson42@gatech.edu>]
@@ -32,7 +51,6 @@ All dates listed follow the ISO standard of yyyy-mm-dd.
   and E/W channels) [David Richardson <drichardson42@gatech.edu>]
     - Allow the LFData class to manage all of the data measured by a receiver
 
-
 ### Removed
 - LFData.to_amp_phase [David Richardson <drichardson42@gatech.edu>]
     - With the changes to multi-channel this function no longer makes sense
@@ -46,6 +64,7 @@ All dates listed follow the ISO standard of yyyy-mm-dd.
     - With the changes to multi-channel this function no longer makes sense
 - LFData.to_deg [David Richardson <drichardson42@gatech.edu>]
     - With the changes to multi-channel this function no longer makes sense
+
 
 ## [0.0.5] - 2020-02-17
 Note: v0.0.4 was skipped due to a packaging error that prevented the 0.0.4
