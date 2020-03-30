@@ -13,9 +13,15 @@ All dates listed follow the ISO standard of yyyy-mm-dd.
     - Provides a look up table of receiver calibration dates and directory names
 - Added LFData.calibrate method [David Richardson <drichardson42@gatech.edu>]
     - If a cal_table is passed to LFData, it can now calibrate its data
+- lf.data.rxquality.eval_day() function [David Richardson <drichardson42@gatech.edu>]
+    - Allows evaluating the paths available for a single day
 
 ### Changed
 - Fixed Arecibo's callsign (AR->AO) [David Richardson <drichardson42@gatech.edu>]
+- Crawler.locate_mats was moved to data.rx.locate_mats [David Richardson <drichardson42@gatech.edu>]
+    - locate_mats is related to data loading more than crawling through data
+- Crawler.crawl was refactored to introduce lf.data.rxquality.eval_day() [David Richardson <drichardson42@gatech.edu>]
+    - Improves the extensibility of the module
 
 ### Removed
 

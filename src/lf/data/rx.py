@@ -1,12 +1,16 @@
-""" Provides the LFData class and load_rx_data function
+""" Provides the LFData class and load_rx_data and locate_mat functions
 
 LFData holds all data reported by the LF AWESOME receiver and includes several
 preprocessing operations.
-data_loader provides a quick way of converting the .mat files provided by the
+load_rx_data provides a quick way of converting the .mat files provided by the
 LF AWESOME receiver to a python dictionary.
+locate_mat determines the file names associated with a tx-rx path on a specific
+day when using the directory structure found on the LF Radio Lab's data server.
 """
 
 import numpy as np
+import os
+import matplotlib.pyplot as plt
 from datetime import datetime
 from datetime import timedelta
 from scipy.io import loadmat
@@ -530,3 +534,62 @@ def check_mat(mat_file, variables=None):
         if not all(elem in expected_keys for elem in variables):
             validity["variables"] = False
     return validity
+
+
+def locate_mat(data_path, date, tx, rx, resolution):
+    """ Determine the four mat_files associated with the provided Tx-Rx Path
+
+    Parameters
+    ----------
+    data_path : str
+        Path to the data directory containing folders for each receiver
+    date : datetime
+        Date of interest
+    tx : {"NAA", "NLK", "NML"}
+        Transmitter of interest
+    rx : str
+        Receiver of interest
+    resolution : {"high", "low"}
+        high resolution = 60 Hz, low resolution = 1 Hz
+
+    Returns
+    -------
+    list of str
+        list containig the amplitude and phase .mat files of interest
+
+    """
+    if resolution.lower() == "low":
+        amp, phase = "A", "B"
+    elif resolution.lower() == "high":
+        amp, phase = "C", "D"
+    else:
+        raise ValueError("Resolution must be high or low!")
+    receiver = lf.txrx.site_mapping[rx.upper()]
+    date_str = date.strftime("%Y_%m_%d")
+    filenames = [
+        os.path.join(
+            os.path.expanduser(data_path),
+            receiver,
+            date_str,
+            "".join(
+                [
+                    rx.upper(),
+                    date.strftime("%y%m%d%H%M%S"),
+                    tx.upper(),
+                    "_10",
+                    str(ch),
+                    amp_phase,
+                    ".mat",
+                ]
+            ),
+        )
+        for ch in [0, 1]
+        for amp_phase in [amp, phase]
+    ]
+    for filename in filenames:
+        if not os.path.exists(filename):
+            print(
+                f"Data missing from {tx}-{rx} on {date.strftime('%b %d, %Y')}"
+            )
+            return None
+    return filenames

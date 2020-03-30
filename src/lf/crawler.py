@@ -1,10 +1,8 @@
-""" Provides Crawler and DateRange classes as well as locate_mat function
+""" Provides Crawler and DateRange classes
 
 The Crawler class provides functionality for locating and evaluating large
 ranges of lf data in a single class.
 The DateRange class allows iterating through dates at various time intervals.
-locate_mat determines the file paths for the .mat files correesponding to a
-single path on a single day.
 """
 
 import os
@@ -70,28 +68,15 @@ class Crawler(object):
         """
         self.paths = {}
         for day in DateRange(self._start, self._stop, step):
-            self.paths[day] = {}
-            for tx in self._txs:
-                self.paths[day][tx] = []
-                for rx in self._rxs:
-                    mats = locate_mat(self._data_path, day, tx, rx, resolution)
-                    if mats is not None:
-                        data = lf.data.rx.LFData(mat_files=mats)
-                        qual = lf.data.rxquality.EvalLF(data, self._config)
-                        print()
-                        print(
-                            f"Evaluating {tx}-{rx} on {day.strftime('%b %d, %Y')}"
-                        )
-                        qual.eval_amp()
-                        qual.eval_phase()
-                        qual.eval_receiver()
-                        if qual.quality.get_quality():
-                            print(f"Data is Good!")
-                            self.paths[day][tx].append(rx)
-                        else:
-                            print(f"Data is Bad!")
-                        if plot:
-                            data.plot()
+            self.paths[day] = lf.data.rxquality.eval_day(
+                day,
+                self._rxs,
+                self._txs,
+                self._data_path,
+                resolution,
+                plot,
+                self._config,
+            )
 
 
 class DateRange:
@@ -141,62 +126,3 @@ class DateRange:
             raise StopIteration
         else:
             return date
-
-
-def locate_mat(data_path, date, tx, rx, resolution):
-    """ Determine the two mat_files associated with the provided Tx-Rx Path
-
-    Parameters
-    ----------
-    data_path : str
-        Path to the data directory containing folders for each receiver
-    date : datetime
-        Date of interest
-    tx : {"NAA", "NLK", "NML"}
-        Transmitter of interest
-    rx : str
-        Receiver of interest
-    resolution : {"high", "low"}
-        high resolution = 60 Hz, low resolution = 1 Hz
-
-    Returns
-    -------
-    list of str
-        list containig the amplitude and phase .mat files of interest
-
-    """
-    if resolution.lower() == "low":
-        amp, phase = "A", "B"
-    elif resolution.lower() == "high":
-        amp, phase = "C", "D"
-    else:
-        raise ValueError("Resolution must be high or low!")
-    receiver = lf.txrx.site_mapping[rx.upper()]
-    date_str = date.strftime("%Y_%m_%d")
-    filenames = [
-        os.path.join(
-            os.path.expanduser(data_path),
-            receiver,
-            date_str,
-            "".join(
-                [
-                    rx.upper(),
-                    date.strftime("%y%m%d%H%M%S"),
-                    tx.upper(),
-                    "_10",
-                    str(ch),
-                    amp_phase,
-                    ".mat",
-                ]
-            ),
-        )
-        for ch in [0, 1]
-        for amp_phase in [amp, phase]
-    ]
-    for filename in filenames:
-        if not os.path.exists(filename):
-            print(
-                f"Data missing from {tx}-{rx} on {date.strftime('%b %d, %Y')}"
-            )
-            return None
-    return filenames
