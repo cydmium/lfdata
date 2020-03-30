@@ -15,6 +15,8 @@ All dates listed follow the ISO standard of yyyy-mm-dd.
     - If a cal_table is passed to LFData, it can now calibrate its data
 - lf.data.rxquality.eval_day() function [David Richardson <drichardson42@gatech.edu>]
     - Allows evaluating the paths available for a single day
+- lf.data.table.Table class [David Richardson <drichardson42@gatech.edu>]
+    - Table() allows saving a days worth of data with specified paths in a single object
 
 ### Changed
 - Fixed Arecibo's callsign (AR->AO) [David Richardson <drichardson42@gatech.edu>]
