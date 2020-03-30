@@ -107,6 +107,8 @@ class EvalLF(object):
             Path to config file with quality rules
         """
         self.data = lf_data
+        if not self.data.rotated:
+            self.data.rotate_data()
         if config is not None:
             self.load_config(config)
         else:
@@ -286,3 +288,55 @@ class EvalLF(object):
         self.quality.phase_slope = model.coef_[0]
         self.quality.phase_yint = model.intercept_
         return (self.quality.phase_slope, self.quality.phase_yint)
+
+
+def eval_day(
+    day, rxs, txs, data_path, resolution="low", plot=False, config=None
+):
+    """TODO: Docstring for eval_day.
+
+    Parameters
+    ----------
+    day : datetime.date
+    rxs : list
+        List of receivers to check
+    txs : list
+        List of transmitters to check
+    data_path : str
+        Path to data directory
+    resolution : {"low", "high"}, optional
+        Resolution of measurements to check
+    plot : bool, optional
+        Flag to plot data, useful for debugging
+    config : configparser, optional
+        Configuration for evaluation functions
+
+    Returns
+    -------
+    dict
+        Dictionary of good paths
+
+    """
+    paths = {}
+    for tx in txs:
+        paths[tx] = []
+        for rx in rxs:
+            mats = lf.data.rx.locate_mat(data_path, day, tx, rx, resolution)
+            if mats is not None:
+                data = lf.data.rx.LFData(mat_files=mats)
+                data.rotate_data()
+                qual = lf.data.rxquality.EvalLF(data, config)
+                print()
+                print(f"Evaluating {tx}-{rx} on {day.strftime('%b %d, %Y')}")
+                qual.eval_amp()
+                qual.eval_phase()
+                qual.eval_receiver()
+                if qual.quality.get_quality():
+                    print(f"Data is Good!")
+                    paths[day][tx].append(rx)
+                else:
+                    print(f"Data is Bad!")
+                if plot:
+                    data.plot()
+
+    return paths
