@@ -14,7 +14,6 @@ import matplotlib.pyplot as plt
 from datetime import datetime
 from datetime import timedelta
 from scipy.io import loadmat
-import matplotlib.pyplot as plt
 from matplotlib import rcParams
 from matplotlib.dates import DateFormatter
 import lf.txrx as txrx
@@ -89,7 +88,7 @@ class LFData(object):
 
     """
 
-    def __init__(self, mat_files=None, data_dicts=None, cal_table=None):
+    def __init__(self, mat_files=None, data_dicts=None):
         """ Load in either .mat files or data dictionaries for a single path
 
         Parameters
@@ -98,11 +97,8 @@ class LFData(object):
             Four mat files [N/S Amp, N/S Phase, E/W Amp, E/W Phase]
         data_dicts : list of dictionaries, optional
             Four dictionaries [N/S Amp, N/S Phase, E/W Amp, E/W Phase]
-        cal_table : lf.calibration.Calibration
-            Table of calibration values
         """
         self.rotated = False
-        self.cal_table = cal_table
         if mat_files is not None:
             if data_dicts is not None:
                 print(
@@ -251,12 +247,6 @@ class LFData(object):
             else:
                 setattr(self, key, value)
 
-        # Rotate data to get az and radial components
-        if self.cal_table:
-            self.calibrate(cal_table=self.cal_table)
-        if not self.rotated:
-            self.rotate_data()
-
     def calibrate(self, cal_table=None, cal_table_path=None, cal_dir=None):
         """ Calibrate the data using a calibration table
 
@@ -278,15 +268,15 @@ class LFData(object):
         cal_table and (cal_table_path, cal_dir) are mutually exclusive arguments
 
         """
-        if cal_table:
-            self.cal_table = cal_table
-        elif cal_table_path and cal_dir:
-            self.cal_table = cal.Calibration(cal_table_path, cal_dir)
-        else:
-            raise RuntimeError(
-                "Must Provide either Calibration table or path to both cal_table_path and cal_dir"
-            )
-        self.data = self.cal_table.cal_data(
+        if not cal_table:
+            if cal_table_path and cal_dir:
+                cal_table = cal.Calibration(cal_table_path, cal_dir)
+                cal_table.load_table()
+            else:
+                raise RuntimeError(
+                    "Must Provide either Calibration table or path to both cal_table_path and cal_dir"
+                )
+        self.data = cal_table.cal_data(
             self.data, self.rx, self.tx, self.start_time
         )
 

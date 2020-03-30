@@ -18,8 +18,10 @@ All dates listed follow the ISO standard of yyyy-mm-dd.
 
 ### Changed
 - Fixed Arecibo's callsign (AR->AO) [David Richardson <drichardson42@gatech.edu>]
-- Crawler.locate_mats was moved to data.rx.locate_mats [David Richardson <drichardson42@gatech.edu>]
-    - locate_mats is related to data loading more than crawling through data
+- LFData no longer automatically rotates or calibrates the input data [David Richardson <drichardson42@gatech.edu>]
+    - rotate_data and calibrate are now manual calls to improve extensibility
+- Crawler.locate_mat was moved to data.rx.locate_mat [David Richardson <drichardson42@gatech.edu>]
+    - locate_mat is related to data loading more than crawling through data
 - Crawler.crawl was refactored to introduce lf.data.rxquality.eval_day() [David Richardson <drichardson42@gatech.edu>]
     - Improves the extensibility of the module
 
