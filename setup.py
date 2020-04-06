@@ -29,7 +29,7 @@ setup(
         "sklearn",
         "geographiclib",
         "pandas",
-        "pysolar",
+        "pysolar>=0.8",
         "matplotlib",
         "datetime",
     ],

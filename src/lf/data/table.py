@@ -33,10 +33,14 @@ class LFTable(object):
         """
         for tx, rxs in paths.items():
             if not rxs:
+                # Skip empty transmitters
                 continue
             self.table[tx] = {}
             for rx in rxs:
                 mats = lf.data.rx.locate_mat(data_dir, day, tx, rx, resolution)
+                if not mats:
+                    # mats will only be none if data was not recorded
+                    raise RuntimeError(f"Data is missing for {tx}-{rx}")
                 data = lf.data.rx.LFData(mats)
                 if cal_table:
                     data.calibrate(cal_table)

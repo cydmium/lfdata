@@ -1,3 +1,4 @@
-__all__ = ["rx", "rxquality"]
+__all__ = ["rx", "rxquality", "table"]
 from . import rx
 from . import rxquality
+from . import table
