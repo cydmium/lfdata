@@ -293,7 +293,7 @@ class EvalLF(object):
 def eval_day(
     day, rxs, txs, data_path, resolution="low", plot=False, config=None
 ):
-    """TODO: Docstring for eval_day.
+    """ Evaluate the quality of a single day
 
     Parameters
     ----------
