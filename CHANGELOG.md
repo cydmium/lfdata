@@ -5,6 +5,16 @@ and this project adheres to (mostly) [Semantic Versioning](https://semver.org/sp
 All dates listed follow the ISO standard of yyyy-mm-dd.
 
 
+## Unreleased
+### Added
+
+### Changed
+- Fixed dictionary key issue in rxquality.eval_day [David Richardson <drichardson42@gatech.edu>]
+    - eval_day was attempting to access paths[day] when it should have been paths[tx]
+
+### Removed
+
+
 ## [0.1.2] - 2020-04-06
 ### Added
 - Added Calibration class to lf.calibration [David Richardson <drichardson42@gatech.edu>]

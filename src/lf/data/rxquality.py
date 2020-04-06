@@ -333,7 +333,7 @@ def eval_day(
                 qual.eval_receiver()
                 if qual.quality.get_quality():
                     print(f"Data is Good!")
-                    paths[day][tx].append(rx)
+                    paths[tx].append(rx)
                 else:
                     print(f"Data is Bad!")
                 if plot:
