@@ -5,7 +5,7 @@ and this project adheres to (mostly) [Semantic Versioning](https://semver.org/sp
 All dates listed follow the ISO standard of yyyy-mm-dd.
 
 
-## Unreleased
+## [0.1.2] - 2020-04-06
 ### Added
 - Added Calibration class to lf.calibration [David Richardson <drichardson42@gatech.edu>]
     - Allows creation of a table of calibration values
