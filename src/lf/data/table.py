@@ -47,6 +47,39 @@ class LFTable(object):
                 data.rotate_data()
                 self.table[tx][rx] = data.data["Az"]
 
+    def list_paths(self):
+        """ Determine which paths contain data
+
+        Returns
+        -------
+        list:
+            sorted list of strings containing the paths present in the table
+
+        """
+        path_list = []
+        for tx, rxs in self.table.items():
+            for rx in rxs.keys():
+                path_list.append(f"{tx}-{rx}".upper())
+        path_list.sort()
+        return path_list
+
+    def get_path_data(self, path):
+        """ Locate data from a single path
+
+        Parameters
+        ----------
+        path : str
+            tx-rx of interest
+
+        Returns
+        -------
+        list
+            [amplitude, phase] data for the path
+
+        """
+        tx, rx = path.split("-")
+        return self.table[tx][rx]
+
     def save(self, path):
         """ Save the current table to path
 
