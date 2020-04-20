@@ -237,8 +237,9 @@ class LFTable(object):
                 i += 1
                 amp = self.table[tx][rx]["amp"]
                 phase = self.table[tx][rx]["phase"]
-                ax_amp = plt.subplot(num_paths, 1, i)
+                ax_amp = plt.subplot(num_paths, 2, i)
+                i += 1
                 ax_phase = plt.subplot(num_paths, 2, i)
-                ax_amp.plot(np.arange(len(amp), amp)
-                ax_phase.plot(np.arange(len(amp),phase)
+                ax_amp.plot(np.arange(len(amp)), amp)
+                ax_phase.plot(np.arange(len(amp)), phase)
         plt.show()
