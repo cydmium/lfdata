@@ -1,4 +1,5 @@
 import pickle
+import numpy as np
 import lf
 
 
@@ -31,6 +32,8 @@ class LFTable(object):
         None
 
         """
+        self.fs = 1 if resolution == "low" else 60
+        self.day = day
         for tx, rxs in paths.items():
             if not rxs:
                 # Skip empty transmitters
@@ -80,6 +83,30 @@ class LFTable(object):
         tx, rx = path.split("-")
         return self.table[tx][rx]
 
+    def trim_data(self, start, stop):
+        """ trim data outside start and stop times
+
+        Parameters
+        ----------
+        start : datetime.time
+            start time (needs hr, min, sec) inclusive
+        stop : datetime.time
+            stop time (needs hr, min, sec) exclusive
+
+        Returns
+        -------
+        None
+
+        """
+        time = np.arange(86400, step=1 / self.fs)
+        start_time = start.hour * 3600 + start.minute * 60 + start.second
+        stop_time = stop.hour * 3600 + stop.minute * 60 + stop.second
+        time_bool = np.logical_and(time >= start_time, time < stop_time)
+        for tx, rxs in self.table.items():
+            for rx in rxs.keys():
+                self.table[tx][rx] = self.table[tx][rx][0][time_bool]
+                self.table[tx][rx] = self.table[tx][rx][1][time_bool]
+
     def save(self, path):
         """ Save the current table to path
 
@@ -93,8 +120,9 @@ class LFTable(object):
         None
 
         """
+        save_dict = {"table": self.table, "day": self.day, "fs": self.fs}
         with open(path, "wb") as f:
-            pickle.dump(self.table, f)
+            pickle.dump(save_dict, f)
 
     def load(self, path):
         """ Load a previous table
@@ -110,4 +138,7 @@ class LFTable(object):
 
         """
         with open(path, "rb") as f:
-            self.table = pickle.load(f)
+            load_dict = pickle.load(f)
+        self.table = load_dict["table"]
+        self.day = load_dict["day"]
+        self.fs = load_dict["fs"]

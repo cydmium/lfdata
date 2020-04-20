@@ -9,6 +9,8 @@ All dates listed follow the ISO standard of yyyy-mm-dd.
 ### Added
 - LFTable now includes the list_paths and get_path_data methods [David Richardson <drichardson42@gatech.edu>]
     - These methods should make working with the table easier when attempting to maintain a specific order of paths
+- LFTable now has a trim_data method to adjust the time range of the table [David Richardson <drichardson42@gatech.edu>]
+    - This addition allows for easily selecting portions of the data to work with
 
 ### Changed
 - Fixed dictionary key issue in rxquality.eval_day [David Richardson <drichardson42@gatech.edu>]
