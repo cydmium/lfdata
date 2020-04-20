@@ -5,7 +5,7 @@ and this project adheres to (mostly) [Semantic Versioning](https://semver.org/sp
 All dates listed follow the ISO standard of yyyy-mm-dd.
 
 
-## Unreleased
+## [0.1.3] - 2020-04-20
 ### Added
 - LFTable now includes the list_paths and get_path_data methods [David Richardson <drichardson42@gatech.edu>]
     - These methods should make working with the table easier when attempting to maintain a specific order of paths
