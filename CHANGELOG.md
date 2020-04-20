@@ -11,6 +11,12 @@ All dates listed follow the ISO standard of yyyy-mm-dd.
     - These methods should make working with the table easier when attempting to maintain a specific order of paths
 - LFTable now has a trim_data method to adjust the time range of the table [David Richardson <drichardson42@gatech.edu>]
     - This addition allows for easily selecting portions of the data to work with
+- LFTable now has a plot method [David Richardson <drichardson42@gatech.edu>]
+    - Plot can now be used to verify filtering, unwrapping, etc. operations
+- LFTable now has unwrap_phase method [David Richardson <drichardson42@gatech.edu>]
+    - Unwrapping the phase is useful for determining true signal characteristics
+- LFTable now has filt_data [David Richardson <drichardson42@gatech.edu>]
+    - Apply a median filter to the data
 
 ### Changed
 - Fixed dictionary key issue in rxquality.eval_day [David Richardson <drichardson42@gatech.edu>]
