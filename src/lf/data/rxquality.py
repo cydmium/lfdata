@@ -14,7 +14,42 @@ import pandas as pd
 
 class DataQuality(object):
 
-    """ Store quality metrics for LF Data"""
+    """ Store quality metrics for LF Data
+
+    Attributes
+    ----------
+    total_time_off : int
+        Amount of time a receiver was off during the entire day
+    longest_time_off : int
+        Longest consecutive amount of receiver down time
+    total_daytime_off : int
+        Amount of time a receiver was off during the daytime
+    longest_daytime_off : int
+        Longest consecutive receiver down time during the daytime
+    missing_midday : bool
+        Whether the high noon section of data was missing
+    total_time_under_threshold : int
+        Amount of time the signal strength was under a specified threshold
+    total_daytime_under_threshold : int
+        Amount of daytime the signal strength was under a specified threshold
+    longest_time_under_threshold : int
+        Longest consecutive time the signal strength was under a specified threshold
+    longest_daytime_under_threshold : int
+        Longest consecutive daytime the signal strength was under a specified threshold
+    noise_time : int
+        Amount of time the signal was "noisy"
+    noise_daytime : int
+        Amount of daytime the signal was "noisy"
+    full_day : bool
+        Whether data for all 24 hours was recorded
+    tx_on : bool
+        Whether the transmitter was on during the recording
+    phase_slope : float
+        Slope of linear fit to phase data. Used for determining if phase ramping is occuring
+    phase_yint : float
+        Y-intercept of linear fit to phase data
+
+    """
 
     def __init__(self):
         """ Initilize quality metrics to None """
@@ -94,7 +129,17 @@ class DataQuality(object):
 
 class EvalLF(object):
 
-    """ Evaluate the quality of LF Data"""
+    """ Evaluate the quality of LF Data
+
+    Attributes
+    ----------
+    data : lf.data.rx.LFData
+        LF Data for a single tx-rx path
+    quality : lf.data.rxquality.DataQuality
+        Quality metrics for the data
+    config : None
+        Not Implemented
+    """
 
     def __init__(self, lf_data, config=None):
         """ Initiliaze config file if supplied
@@ -104,7 +149,7 @@ class EvalLF(object):
         lf_data : LFData
             Object containing one path of data
         config : str
-            Path to config file with quality rules
+            Path to config file with quality rules, NOT IMPLEMENTED
         """
         self.data = lf_data
         if not self.data.rotated:
@@ -309,7 +354,7 @@ def eval_day(
     plot : bool, optional
         Flag to plot data, useful for debugging
     config : configparser, optional
-        Configuration for evaluation functions
+        Configuration for evaluation functions, NOT IMPLEMENTED
 
     Returns
     -------
