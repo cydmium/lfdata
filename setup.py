@@ -33,5 +33,5 @@ setup(
         "matplotlib",
         "datetime",
     ],
-    extras_require={"dev": ["twine"]},
+    extras_require={"dev": ["twine", "sphinx"], "docs": ["sphinx"]},
 )
