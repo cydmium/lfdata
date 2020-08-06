@@ -8,14 +8,16 @@ locate_mat determines the file names associated with a tx-rx path on a specific
 day when using the directory structure found on the LF Radio Lab's data server.
 """
 
-import numpy as np
 import os
+from datetime import timedelta
+
+import numpy as np
 import matplotlib.pyplot as plt
 from datetime import datetime
-from datetime import timedelta
 from scipy.io import loadmat
 from matplotlib import rcParams
 from matplotlib.dates import DateFormatter
+
 import lf.txrx as txrx
 import lf.utils
 import lf.calibration as cal

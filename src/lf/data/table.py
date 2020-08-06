@@ -1,8 +1,10 @@
 import pickle
+
 import numpy as np
 import matplotlib.pyplot as plt
-import lf
 from scipy.signal import medfilt
+
+import lf
 
 
 class LFTable(object):
