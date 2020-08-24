@@ -51,6 +51,7 @@ User Guide
 
    user_guide/Intro
    user_guide/Quickstart
+   user_guide/Advanced_Usage
    
 
 Contact Information

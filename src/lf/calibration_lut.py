@@ -1,11 +1,9 @@
-""" This file contains a look up table for receiver calibration dates and directory names.
-"""
+""" This file contains a look up table for receiver calibration dates and directory names. """
 
 from datetime import date
 
 cal_lut = {
-    """ Look up table for which calibration files correspond with which dates
-    """
+    """ Look up table for which calibration files correspond with which dates """
     "AA": {date(2018, 5, 25): "BriarwoodDiffTest_2018_05"},
     "AO": {date(2017, 7, 19): "Arecibo_2017_07"},
     "BX": {

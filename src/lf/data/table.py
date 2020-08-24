@@ -244,4 +244,5 @@ class LFTable(object):
                 ax_phase = plt.subplot(num_paths, 2, i)
                 ax_amp.plot(np.arange(len(amp)), amp)
                 ax_phase.plot(np.arange(len(amp)), phase)
+                ax_amp.set_ylabel(f"{tx}-{rx}")
         plt.show()
