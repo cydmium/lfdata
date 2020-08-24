@@ -6,9 +6,11 @@ The DateRange class allows iterating through dates at various time intervals.
 """
 
 import os
+from datetime import datetime
+from datetime import timedelta
+
 import lf.txrx
 import lf.data
-from datetime import datetime, timedelta
 
 
 class Crawler(object):

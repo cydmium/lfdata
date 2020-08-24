@@ -6,10 +6,12 @@ data stored in an LFData object
 """
 
 from configparser import ConfigParser
+
 import numpy as np
-from sklearn.linear_model import LinearRegression
-import lf
 import pandas as pd
+from sklearn.linear_model import LinearRegression
+
+import lf
 
 
 class DataQuality(object):

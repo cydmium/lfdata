@@ -1,10 +1,12 @@
 import os
 import pickle
 import errno
+
 import numpy as np
+from scipy.io import loadmat
+
 import lf.txrx
 from lf.calibration_lut import cal_lut
-from scipy.io import loadmat
 
 
 class Calibration(object):

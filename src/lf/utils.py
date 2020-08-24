@@ -9,13 +9,15 @@ tx_rx_midpoint calculate the midpoint between a receiver and transmitter
 solar_max_time determines the time at which solar maximum occurs for a given lat, lon
 """
 
-import numpy as np
-import pysolar.solar
-import lf.txrx as txrx
-from geographiclib.geodesic import Geodesic
 from datetime import datetime
 from datetime import timedelta
 from datetime import timezone
+
+import numpy as np
+import pysolar.solar
+from geographiclib.geodesic import Geodesic
+
+import lf.txrx as txrx
 
 geod = Geodesic.WGS84
 

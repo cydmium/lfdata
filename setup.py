@@ -5,7 +5,7 @@ with open("README.md", "r") as f:
 
 setup(
     name="lf",
-    version="0.1.3",
+    version="0.1.4",
     description="Tools for interacting with GT's LF AWESOME Receiver data",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -33,5 +33,8 @@ setup(
         "matplotlib",
         "datetime",
     ],
-    extras_require={"dev": ["twine", "sphinx"], "docs": ["sphinx"]},
+    extras_require={
+        "dev": ["twine", "sphinx==3.2.1"],
+        "docs": ["sphinx==3.2.1"],
+    },
 )

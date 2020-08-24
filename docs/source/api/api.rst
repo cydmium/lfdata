@@ -1,3 +1,5 @@
+.. _api reference:
+
 API Reference
 =============
 
@@ -22,7 +24,7 @@ Data Quality
    lf.crawler.Crawler
 
 Data Table
----------
+----------
 .. autosummary::
    :toctree: table
 
