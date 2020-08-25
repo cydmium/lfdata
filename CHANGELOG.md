@@ -5,10 +5,11 @@ and this project adheres to (mostly) [Semantic Versioning](https://semver.org/sp
 All dates listed follow the ISO standard of yyyy-mm-dd.
 
 
-## Unreleased
+## [0.1.4] - 2020-08-24
 ### Added
-
+ - Documentation is now complete under docs [David Richardson <drichardson42@gatech.edu>]
 ### Changed
+ - Improve in-code documentation [David Richardson <drichardson42@gatech.edu>]
 
 ### Removed
 
