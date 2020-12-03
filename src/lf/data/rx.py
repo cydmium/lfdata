@@ -10,10 +10,10 @@ day when using the directory structure found on the LF Radio Lab's data server.
 
 import os
 from datetime import timedelta
+from datetime import datetime
 
 import numpy as np
 import matplotlib.pyplot as plt
-from datetime import datetime
 from scipy.io import loadmat
 from matplotlib import rcParams
 from matplotlib.dates import DateFormatter
@@ -113,7 +113,7 @@ class LFData(object):
 
         """
         if len(mat_files) != 4:
-            raise ValueError("Only two mat_files are accepted.")
+            raise ValueError("Only four mat_files are accepted.")
         data = {
             "NS": [load_rx_data(mat_files[0]), load_rx_data(mat_files[1])],
             "EW": [load_rx_data(mat_files[2]), load_rx_data(mat_files[3])],
@@ -127,7 +127,7 @@ class LFData(object):
         Parameters
         ----------
         data_dicts : list of dictionaries, optional
-            Two dictionaries corresponding to amplitude and phase of a path
+            Four dictionaries corresponding to amplitude and phase of a path
 
         Returns
         -------
@@ -135,7 +135,7 @@ class LFData(object):
 
         """
         if len(data_dicts) != 4:
-            raise ValueError("Only two data_dicts are accepted.")
+            raise ValueError("Only four data_dicts are accepted.")
         data = {
             "NS": [data_dicts[0], data_dicts[1]],
             "EW": [data_dicts[2], data_dicts[3]],
@@ -584,3 +584,43 @@ def locate_mat(data_path, date, tx, rx, resolution):
             )
             return None
     return filenames
+
+
+def join_days(days):
+    """ Join two consecutive instances of LFData objects
+
+    Parameters
+    ----------
+    days : List of LFData
+        List of LFData objects to be combined
+
+    Returns
+    -------
+    LFData
+        Combination of the days
+    """
+    days = sorted(days, key=lambda day: day.start_time)
+    for day1, day2 in zip(days[:-1], days[1:]):
+        delta = (day2.start_time - day1.start_time).total_seconds()
+        if delta > 86400:
+            raise RuntimeError("Days are not consecutive")
+    tx, rx = days[0].tx, days[1].rx
+    fs = days[0].Fs
+    data = days[0]
+    for day in days[1:]:
+        if day.tx != tx or day.rx != rx:
+            raise RuntimeError("Not the same paths")
+        if day.Fs != fs:
+            raise RuntimeError("Not the same sampling frequency")
+        try:
+            for key in data.data:
+                data.data[key] = np.array(
+                    [
+                        np.concatenate([data.data[key][i], day.data[key][i]])
+                        for i in [0, 1]
+                    ]
+                )
+        except KeyError:
+            raise RuntimeError("Data is not consistently rotated")
+
+    return data
