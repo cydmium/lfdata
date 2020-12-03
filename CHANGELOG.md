@@ -4,6 +4,17 @@ The format for this changelog is based on [Keep a Changelog](https://keepachange
 and this project adheres to (mostly) [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 All dates listed follow the ISO standard of yyyy-mm-dd.
 
+## [Unreleased]
+### Added
+ - Implement join_days to enable joining of multiple consecutive LFData objects [David Richardson <drichardson42@gatech.edu>]
+    - This allows an arbitrarily long sequence of data to be stored in a single object
+ - Implement LFData.trim to allow trimming the data to a desired time range [David Richardson <drichardson42@gatech.edu>]
+    - This allows the LFData class to store only the data that is of interest
+### Changed
+ - Fixed a few incorrect docstrings about the number of mat files/data dictionaries required for the LFData class [David Richardson <drichardson42@gatech.edu>]
+### Removed
+
+
 ## [0.1.5] - 2020-12-03
 ### Added
 ### Changed

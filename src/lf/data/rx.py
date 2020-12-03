@@ -299,6 +299,33 @@ class LFData(object):
         self.rotated = True
         return self.data
 
+    def trim(self, start, duration):
+        """ Cut out data that is not needed
+
+        Parameters
+        ----------
+        start : datetime.datetime
+            The first sample to include
+        duration : datetime.timedelta
+            How much time to includes
+
+        Returns
+        -------
+        None
+
+        """
+        cur_dur = self.data["NS"].shape[1] / self.Fs
+        if start < self.start_time:
+            raise RuntimeError("Desired start time before saved data begins")
+        if start + duration > self.start_time + timedelta(seconds=cur_dur):
+            raise RuntimeError("Desired duration is too long for saved data")
+        start_ind = int((start - self.start_time).total_seconds() * self.Fs)
+        dur = int(duration.total_seconds() * self.Fs)
+        stop_ind = start_ind + dur
+        for key in self.data:
+            self.data[key] = self.data[key][:, start_ind:stop_ind]
+        self.start_time = start
+
     def plot(self):
         """ Plot the data
 
