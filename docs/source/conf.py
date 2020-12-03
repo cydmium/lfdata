@@ -22,7 +22,7 @@ copyright = "2020, David Richardson"
 author = "David Richardson"
 
 # The full version, including alpha/beta/rc tags
-release = "0.1.3"
+release = "0.1.5"
 
 
 # -- General configuration ---------------------------------------------------
