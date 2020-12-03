@@ -4,7 +4,7 @@ The format for this changelog is based on [Keep a Changelog](https://keepachange
 and this project adheres to (mostly) [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 All dates listed follow the ISO standard of yyyy-mm-dd.
 
-## UNRELEASED
+## [UNRELEASED]
 ### Added
 ### Changed
  - Improve rules for daytime quality assessment [David Richardson <drichardson42@gatech.edu>]
