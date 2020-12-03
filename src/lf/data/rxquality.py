@@ -85,23 +85,21 @@ class DataQuality(object):
 
         """
         quality = True
-        if self.total_time_off > 18000:
+        if self.total_time_off > 36000:
             print("Receiver Off for Ten Hours")
-            quality = False
-        if self.longest_time_off > 7200:
-            print("Receiver Off at least 2 hours consecutively")
-            quality = False
+            # quality = False
+        if self.longest_time_off > 18000:
+            print("Receiver Off at least 5 hours consecutively")
+            # quality = False
         if self.total_daytime_off > 7200:
             print("Missing at least 2 hour of daytime data")
             quality = False
-        if self.longest_daytime_off > 900:
-            if self.missing_midday:
-                print("Fifteen consecutive minutes of missing daytime data")
-                quality = False
-            else:
-                print(
-                    "Fifteen consecutive minutes of missing daytime data, but midday exists"
-                )
+        if self.longest_daytime_off > 3600:
+            print("Missing one consecutive hour of daytime data")
+            quality = False
+        if self.missing_midday:
+            print("Missing Midday")
+            quality = False
         if self.total_daytime_under_threshold > 3600:
             print("One Daytime Hour under threshold")
             quality = False
@@ -114,10 +112,10 @@ class DataQuality(object):
         if self.phase_slope > 100:
             print("Phase Ramping")
             quality = False
-        if self.noise_daytime > 3600:
+        if self.noise_daytime > 7200:
             print("Noisy Daytime Phase")
             quality = False
-        if self.noise_time > 7200:
+        if self.noise_time > 9000:
             print("Noisy Phase")
             quality = False
         if not self.tx_on:
@@ -237,6 +235,13 @@ class EvalLF(object):
         else:
             if self.data.tx == "NLK" and self.data.rx == "BW":
                 threshold = 29.0
+            if self.data.rx == "AO":
+                if self.data.tx == "NML":
+                    threshold = 26.0
+                elif self.data.tx == "NLK":
+                    threshold = 25.0
+                else:
+                    threshold = 30.0
             else:
                 threshold = 30.0
         data = 20 * np.log10(self.data.data["Az"][0])
@@ -291,34 +296,6 @@ class EvalLF(object):
         """
         data = np.copy(self.data.data["Az"][1])
         time = np.linspace(0, 24, 86400 * self.data.Fs)
-        # Define daytime as 9 AM to 5 PM EST = 14-22 UT
-        daytime = np.logical_and(time >= 14, time <= 22)
-        day_data = data[daytime]
-        # Compute average moving std
-        ts = pd.Series(data)
-        rolling_std = (
-            ts.rolling(window=3600).std().rolling(window=3600).mean()
-        )  # 3600 sec = 1 hr
-        noise_bool = np.isclose(rolling_std, 100, rtol=0.3).astype(float)
-        noise_bool[noise_bool.astype(bool)] = np.NaN
-        try:
-            noise = lf.utils.repeatedNans(noise_bool) / self.data.Fs
-        # Type error if repeatedNans finds no Nans
-        except TypeError:
-            noise = 0.0
-        self.quality.noise_time = np.max(noise)
-        ts = pd.Series(day_data)
-        rolling_std = (
-            ts.rolling(window=3600).std().rolling(window=3600).mean()
-        )  # 3600 sec = 1 hr
-        noise_bool = np.isclose(rolling_std, 100, rtol=0.3).astype(float)
-        noise_bool[noise_bool.astype(bool)] = np.NaN
-        try:
-            noise = lf.utils.repeatedNans(noise_bool) / self.data.Fs
-        # Type error if repeatedNans finds no Nans
-        except TypeError:
-            noise = 0.0
-        self.quality.noise_daytime = np.max(noise)
         # Replace Nans with value on either side
         idx = lf.utils.findNans(data)
         if idx is not None:
@@ -328,9 +305,37 @@ class EvalLF(object):
                     data[range(start, stop)] = data[stop]
                 else:
                     data[range(start, stop)] = data[start - 1]
+        unwrapped = np.unwrap(data)
+        # Define daytime as 9 AM to 5 PM EST = 14-22 UT
+        daytime = np.logical_and(time >= 14, time <= 22)
+        day_unwrapped = unwrapped[daytime]
+        # Compute average moving std
+        ts = pd.Series(unwrapped)
+        rolling_std = (
+            ts.rolling(window=3600).std().rolling(window=3600).mean()
+        )  # 3600 sec = 1 hr
+        noise_bool = (rolling_std > 35).astype(float)
+        noise_bool[noise_bool.astype(bool)] = np.NaN
+        try:
+            noise = lf.utils.repeatedNans(noise_bool) / self.data.Fs
+        # Type error if repeatedNans finds no Nans
+        except TypeError:
+            noise = 0.0
+        self.quality.noise_time = np.max(noise)
+        ts = pd.Series(day_unwrapped)
+        rolling_std = (
+            ts.rolling(window=3600).std().rolling(window=3600).mean()
+        )  # 3600 sec = 1 hr
+        noise_bool = (rolling_std > 35).astype(float)
+        noise_bool[noise_bool.astype(bool)] = np.NaN
+        try:
+            noise = lf.utils.repeatedNans(noise_bool) / self.data.Fs
+        # Type error if repeatedNans finds no Nans
+        except TypeError:
+            noise = 0.0
+        self.quality.noise_daytime = np.max(noise)
         # Fit linear model to determine slope
         time = time.reshape((-1, 1))
-        unwrapped = np.unwrap(data)
         model = LinearRegression().fit(time, unwrapped)
         self.quality.phase_slope = model.coef_[0]
         self.quality.phase_yint = model.intercept_

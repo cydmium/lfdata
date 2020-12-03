@@ -314,30 +314,38 @@ class LFData(object):
         ]
         if "R" in self.data.keys() and "Az" in self.data.keys():
             fig, axes = plt.subplots(2, 4, figsize=(18, 8), sharex=True)
-            axes[1, 0].plot(axis_time, 20 * np.log10(self.data["Az"][0]))
+            axes[1, 0].plot(
+                axis_time[::40], 20 * np.log10(self.data["Az"][0][::40])
+            )
             axes[1, 0].set_ylabel("Amplitude [dB]")
             axes[1, 0].set_title("Az Amplitude")
-            axes[1, 1].plot(axis_time, self.data["Az"][1])
+            axes[1, 1].plot(axis_time[::40], self.data["Az"][1][::40])
             axes[1, 1].set_ylabel("Amplitude [dB]")
             axes[1, 1].set_title("Az Phase")
-            axes[1, 2].plot(axis_time, 20 * np.log10(self.data["R"][0]))
+            axes[1, 2].plot(
+                axis_time[::40], 20 * np.log10(self.data["R"][0][::40])
+            )
             axes[1, 2].set_ylabel("Amplitude [dB]")
             axes[1, 2].set_title("Radial Amplitude")
-            axes[1, 3].plot(axis_time, self.data["R"][1])
+            axes[1, 3].plot(axis_time[::40], self.data["R"][1][::40])
             axes[1, 3].set_ylabel("Amplitude [dB]")
             axes[1, 3].set_title("Radial Phase")
         else:
             fig, axes = plt.subplots(1, 4, figsize=(18, 4), sharex=True)
-        axes[0, 0].plot(axis_time, 20 * np.log10(self.data["NS"][0]))
+        axes[0, 0].plot(
+            axis_time[::40], 20 * np.log10(self.data["NS"][0][::40])
+        )
         axes[0, 0].set_ylabel("Amplitude [dB]")
         axes[0, 0].set_title("N/S Amplitude")
-        axes[0, 1].plot(axis_time, self.data["NS"][1])
+        axes[0, 1].plot(axis_time[::40], self.data["NS"][1][::40])
         axes[0, 1].set_ylabel("Amplitude [dB]")
         axes[0, 1].set_title("N/S Phase")
-        axes[0, 2].plot(axis_time, 20 * np.log10(self.data["EW"][0]))
+        axes[0, 2].plot(
+            axis_time[::40], 20 * np.log10(self.data["EW"][0][::40])
+        )
         axes[0, 2].set_ylabel("Amplitude [dB]")
         axes[0, 2].set_title("E/W Amplitude")
-        axes[0, 3].plot(axis_time, self.data["EW"][1])
+        axes[0, 3].plot(axis_time[::40], self.data["EW"][1][::40])
         axes[0, 3].set_ylabel("Amplitude [dB]")
         axes[0, 3].set_title("E/W Phase")
         axes[0, 0].set_xlim([axis_time[0], axis_time[-1]])
@@ -352,6 +360,7 @@ class LFData(object):
                 axis.grid()
         for axis in axes[-1, :]:
             axis.set_xlabel("Time [UT]")
+        fig.suptitle(f"{self.tx}-{self.rx}")
         plt.show()
 
 

@@ -4,6 +4,14 @@ The format for this changelog is based on [Keep a Changelog](https://keepachange
 and this project adheres to (mostly) [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 All dates listed follow the ISO standard of yyyy-mm-dd.
 
+## UNRELEASED
+### Added
+### Changed
+ - Improve rules for daytime quality assessment [David Richardson <drichardson42@gatech.edu>]
+    - Particularly focused on improving Arecibo's quality rules
+    - Also reduces inconsistency caused by phase wrapping when determining noise
+### Removed
+
 
 ## [0.1.4] - 2020-08-24
 ### Added
