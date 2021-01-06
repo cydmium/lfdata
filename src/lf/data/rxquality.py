@@ -375,7 +375,11 @@ def eval_day(
         for rx in rxs:
             mats = lf.data.rx.locate_mat(data_path, day, tx, rx, resolution)
             if mats is not None:
-                data = lf.data.rx.LFData(mat_files=mats)
+                # Catch case when mat file metrics do not match
+                try:
+                    data = lf.data.rx.LFData(mat_files=mats)
+                except (ValueError, KeyError):
+                    continue
                 data.rotate_data()
                 qual = lf.data.rxquality.EvalLF(data, config)
                 print()

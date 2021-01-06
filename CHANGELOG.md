@@ -12,6 +12,7 @@ All dates listed follow the ISO standard of yyyy-mm-dd.
     - This allows the LFData class to store only the data that is of interest
 ### Changed
  - Fixed a few incorrect docstrings about the number of mat files/data dictionaries required for the LFData class [David Richardson <drichardson42@gatech.edu>]
+ - Fixed how eval_day handles an incorrect mat file [David Richardson <drichardson42@gatech.edu>]
 ### Removed
 
 
