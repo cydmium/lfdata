@@ -6,8 +6,14 @@ All dates listed follow the ISO standard of yyyy-mm-dd.
 
 ## [Unreleased]
 ### Added
- - Implement lf.data.rx.rotate_vector function [David Richardson <drichardson42@gatech.edu>]
+ - Implement lf.data.rx.rotate_vectors function [David Richardson <drichardson42@gatech.edu>]
     - Allows rotations of arbitrary length vectors of N/S, E/W to radial, azimuth
+ - Implement lf.data.rx.rotate_vectors_ellipse function [Nikhil Pailoor <npailoor3@gatech.edu>]
+    - Allows rotations of arbitrary length vectors of radial, azimuth to parameters of elliptically polarized wave
+ - Implement lf.utils.rot_tilt function [Nikhil Pailoor <npailoor3@gatech.edu>]
+    - Generates rotation matrix used in lf.data.rx.rotate_vectors_ellipse
+ - Implement lf.data.rx.rotate_polar
+    - Uses lf.data.rx.rotate_vectors_ellipse to generate polarization ellipse parameters for the data field
 ### Changed
  - Modify lf.data.rx.data.rotate_data to use lf.data.rx.rotate_vector function [David Richardson <drichardson42@gatech.edu>]
 ### Removed
