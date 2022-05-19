@@ -274,7 +274,19 @@ class LFData(object):
         )
         self.rotated = True
         return self.data
-
+    
+    def rotate_polar(self):
+        """ Rotate data to be in polarization ellipse format
+        Returns
+        -------
+        self
+        """
+        if ~(self.rotated):
+            self.rotate_data()
+        self.data["Major"],self.data["Minor"], self.data["Tilt"], self.data["Start"], self.data["Chi"] = rotate_vectors_polar(self.data["R"],self.data["Az"])
+        self.polar = True
+        return self.data        
+ 
     def trim(self, start, duration):
         """ Cut out data that is not needed
 
@@ -644,3 +656,37 @@ def rotate_vectors(NS, EW, rx, tx, correction_val=0.0):
     amp_az = np.abs(b_az)
     phase_az = np.rad2deg(np.angle(b_az))
     return (np.array([amp_r, phase_r]), np.array([amp_az, phase_az]))
+
+def rotate_vectors_ellipse(R,Az):
+    """Rotate a set of tuples from Radial/Azimuthal orientation to a polarization ellipse format as described by Gross (2018), with a major and minor axis amplitude components, tilt angle, and start phase.
+    Parameters:
+    ----------
+    R: tuple(np.ndarray, np.ndarray)
+        Radial amplitude, phase
+    Az: tuple(np.ndarray, np.ndarray)
+        Azimuthal amplitude, phase
+ 
+    Returns
+    -------
+    tuple(ndarray)
+        [major axis, minor axis, tilt angle, start phase, chi]
+
+    """
+    amp_r, phase_r = R
+    amp_az,phase_az = Az
+    B_r = amp_r*np.exp(1j*np.deg2rad(phase_r)
+    B_az = amp_phi*np.exp(1j*np.deg2rad(phase_az))
+    #Calculate tilt angle
+    psi_0 = np.angle(np.divide(-B_r,B_az))
+    gamma = np.divide(amp_r,amp_az)
+    tilt_angle = (1/2)*np.atan2(2*np.multiply(gamma,np.cos(psi_0)),(1-np.square(gamma))
+    #Apply rotation
+    B_min,B_maj = lf.utils.rot_tilt(tilt_angle).dot([B_r, B_az])
+    start_phase = -1*np.angle(B_maj)
+    amp_maj = np.abs(B_maj)
+    amp_min = np.abs(B_min)
+    #Calculate ellipticity
+    chi = 0.5*np.arcsin(2*np.multiply(np.divide(gamma,(1+np.square(gamma))),np.sin(psi_0)))
+    #Flip sign of minor axis to indicate rotation direction
+    amp_min = np.multiply(np.sign(chi),amp_min)
+    return amp_maj,amp_min,tilt_angle,start_phase,chi

@@ -106,6 +106,22 @@ def rot_az(angle_deg):
         [[-np.sin(ang), np.cos(ang)], [-np.cos(ang), -np.sin(ang)]]
     )
 
+def rot_tilt(angle_deg):
+    """ Determine rotation factors for rotating between radial/azimuth coordinates to polarized elliptical coordinates
+
+    Parameters
+    ----------
+    angle_deg : float
+        Degree to rotate by
+
+    Returns
+    -------
+    np.array
+        New amplitude and phase components
+
+    """
+    ang = np.deg2rad(angle_deg)
+    return np.array([np.cos(ang), -np.sin(ang)],[np.sin(ang),np.cos(ang)])
 
 def tx_rx_midpoint(tx, rx):
     """ Compute the location of the midpoint between transmitter and receiver
