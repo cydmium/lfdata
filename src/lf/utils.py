@@ -121,7 +121,7 @@ def rot_tilt(angle_deg):
 
     """
     ang = np.deg2rad(angle_deg)
-    return np.array([np.cos(ang), -np.sin(ang)],[np.sin(ang),np.cos(ang)])
+    return np.array([[np.cos(ang), -np.sin(ang)],[np.sin(ang),np.cos(ang)]])
 
 def tx_rx_midpoint(tx, rx):
     """ Compute the location of the midpoint between transmitter and receiver

@@ -283,7 +283,7 @@ class LFData(object):
         """
         if ~(self.rotated):
             self.rotate_data()
-        self.data["Major"],self.data["Minor"], self.data["Tilt"], self.data["Start"], self.data["Chi"] = rotate_vectors_polar(self.data["R"],self.data["Az"])
+        self.data["Major"],self.data["Minor"], self.data["Tilt"], self.data["Start"], self.data["Chi"] = rotate_vectors_ellipse(self.data["R"],self.data["Az"])
         self.polar = True
         return self.data        
  
@@ -674,14 +674,17 @@ def rotate_vectors_ellipse(R,Az):
     """
     amp_r, phase_r = R
     amp_az,phase_az = Az
-    B_r = amp_r*np.exp(1j*np.deg2rad(phase_r)
-    B_az = amp_phi*np.exp(1j*np.deg2rad(phase_az))
+    B_r = amp_r*np.exp(1j*np.deg2rad(phase_r))
+    B_az = amp_az*np.exp(1j*np.deg2rad(phase_az))
     #Calculate tilt angle
     psi_0 = np.angle(np.divide(-B_r,B_az))
     gamma = np.divide(amp_r,amp_az)
-    tilt_angle = (1/2)*np.atan2(2*np.multiply(gamma,np.cos(psi_0)),(1-np.square(gamma))
+    tilt_angle = (1/2)*np.arctan2(2*np.multiply(gamma,np.cos(psi_0)),(1-np.square(gamma)))
     #Apply rotation
-    B_min,B_maj = lf.utils.rot_tilt(tilt_angle).dot([B_r, B_az])
+    rot_matrix = lf.utils.rot_tilt(tilt_angle)
+    B_min,B_maj = 1j*np.zeros([2,len(B_r)])
+    for i in range(len(B_r)):
+        B_min[i],B_maj[i] = np.dot(rot_matrix[:,:,i],[B_r[i], B_az[i]])
     start_phase = -1*np.angle(B_maj)
     amp_maj = np.abs(B_maj)
     amp_min = np.abs(B_min)
