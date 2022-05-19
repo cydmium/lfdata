@@ -9,18 +9,17 @@ day when using the directory structure found on the LF Radio Lab's data server.
 """
 
 import os
-from datetime import timedelta
-from datetime import datetime
+from datetime import datetime, timedelta
 
-import numpy as np
 import matplotlib.pyplot as plt
-from scipy.io import loadmat
+import numpy as np
 from matplotlib import rcParams
 from matplotlib.dates import DateFormatter
+from scipy.io import loadmat
 
+import lf.calibration as cal
 import lf.txrx as txrx
 import lf.utils
-import lf.calibration as cal
 
 
 class LFData(object):
@@ -92,9 +91,7 @@ class LFData(object):
         self.rotated = False
         if mat_files is not None:
             if data_dicts is not None:
-                print(
-                    "Both mat_files and data_dicts reported, using mat_files."
-                )
+                print("Both mat_files and data_dicts reported, using mat_files.")
             self.load_mats(mat_files)
         elif data_dicts is not None:
             self.load_dicts(data_dicts)
@@ -181,30 +178,20 @@ class LFData(object):
         for key in matched_keys:
             try:
                 values = [
-                    data_list[ch][entry][key]
-                    for ch in ["NS", "EW"]
-                    for entry in [0, 1]
+                    data_list[ch][entry][key] for ch in ["NS", "EW"] for entry in [0, 1]
                 ]
                 if type(values[0]) == np.float64:
-                    if not all(
-                        np.isclose(v, values[0], rtol=0.05) for v in values
-                    ):
+                    if not all(np.isclose(v, values[0], rtol=0.05) for v in values):
                         raise ValueError(f"Data differs in {key}")
                 elif not all(v == values[0] for v in values):
                     raise ValueError(f"Data differs in {key}")
             except KeyError:
                 print(f"Unable to verify {key} values due to missing key")
         try:
-            if not (
-                data_list["NS"][0]["is_amp"]
-                == data_list["EW"][0]["is_amp"]
-                == 1
-            ):
+            if not (data_list["NS"][0]["is_amp"] == data_list["EW"][0]["is_amp"] == 1):
                 raise ValueError("Input data is not in the correct order")
             elif not (
-                data_list["NS"][1]["is_amp"]
-                == data_list["EW"][1]["is_amp"]
-                == 0
+                data_list["NS"][1]["is_amp"] == data_list["EW"][1]["is_amp"] == 0
             ):
                 raise ValueError("Input data is not in the correct order")
         except KeyError:
@@ -267,9 +254,7 @@ class LFData(object):
                 raise RuntimeError(
                     "Must Provide either Calibration table or path to both cal_table_path and cal_dir"
                 )
-        self.data = cal_table.cal_data(
-            self.data, self.rx, self.tx, self.start_time
-        )
+        self.data = cal_table.cal_data(self.data, self.rx, self.tx, self.start_time)
 
     def rotate_data(self, correction_val=0.0):
         """ Rotate data to be in az and radial components
@@ -281,21 +266,12 @@ class LFData(object):
 
         Returns
         -------
-        None
+        self
 
         """
-        amp_ns, phase_ns = self.data["NS"]
-        amp_ew, phase_ew = self.data["EW"]
-        b_ns = amp_ns * np.exp(1j * np.deg2rad(phase_ns))
-        b_ew = amp_ew * np.exp(1j * np.deg2rad(phase_ew))
-        az = lf.utils.get_azimuth(self.rx, self.call_sign) - correction_val
-        b_r, b_az = lf.utils.rot_az(az).dot([b_ns, -b_ew])
-        amp_r = np.abs(b_r)
-        phase_r = np.rad2deg(np.angle(b_r))
-        amp_az = np.abs(b_az)
-        phase_az = np.rad2deg(np.angle(b_az))
-        self.data["R"] = np.array([amp_r, phase_r])
-        self.data["Az"] = np.array([amp_az, phase_az])
+        self.data["R"], self.data["Az"] = rotate_vectors(
+            self.data["NS"], self.data["EW"], self.rx, self.tx, correction_val
+        )
         self.rotated = True
         return self.data
 
@@ -341,17 +317,13 @@ class LFData(object):
         ]
         if "R" in self.data.keys() and "Az" in self.data.keys():
             fig, axes = plt.subplots(2, 4, figsize=(18, 8), sharex=True)
-            axes[1, 0].plot(
-                axis_time[::40], 20 * np.log10(self.data["Az"][0][::40])
-            )
+            axes[1, 0].plot(axis_time[::40], 20 * np.log10(self.data["Az"][0][::40]))
             axes[1, 0].set_ylabel("Amplitude [dB]")
             axes[1, 0].set_title("Az Amplitude")
             axes[1, 1].plot(axis_time[::40], self.data["Az"][1][::40])
             axes[1, 1].set_ylabel("Amplitude [dB]")
             axes[1, 1].set_title("Az Phase")
-            axes[1, 2].plot(
-                axis_time[::40], 20 * np.log10(self.data["R"][0][::40])
-            )
+            axes[1, 2].plot(axis_time[::40], 20 * np.log10(self.data["R"][0][::40]))
             axes[1, 2].set_ylabel("Amplitude [dB]")
             axes[1, 2].set_title("Radial Amplitude")
             axes[1, 3].plot(axis_time[::40], self.data["R"][1][::40])
@@ -359,17 +331,13 @@ class LFData(object):
             axes[1, 3].set_title("Radial Phase")
         else:
             fig, axes = plt.subplots(1, 4, figsize=(18, 4), sharex=True)
-        axes[0, 0].plot(
-            axis_time[::40], 20 * np.log10(self.data["NS"][0][::40])
-        )
+        axes[0, 0].plot(axis_time[::40], 20 * np.log10(self.data["NS"][0][::40]))
         axes[0, 0].set_ylabel("Amplitude [dB]")
         axes[0, 0].set_title("N/S Amplitude")
         axes[0, 1].plot(axis_time[::40], self.data["NS"][1][::40])
         axes[0, 1].set_ylabel("Amplitude [dB]")
         axes[0, 1].set_title("N/S Phase")
-        axes[0, 2].plot(
-            axis_time[::40], 20 * np.log10(self.data["EW"][0][::40])
-        )
+        axes[0, 2].plot(axis_time[::40], 20 * np.log10(self.data["EW"][0][::40]))
         axes[0, 2].set_ylabel("Amplitude [dB]")
         axes[0, 2].set_title("E/W Amplitude")
         axes[0, 3].plot(axis_time[::40], self.data["EW"][1][::40])
@@ -454,12 +422,7 @@ def load_rx_data(mat_file, variables=None, file_check=True):
         elif key in ["is_amp", "is_msk", "is_broadband"]:
             # Should be boolean
             data[key] = bool(data[key][0][0])
-        elif key in [
-            "hardware_description",
-            "station_name",
-            "call_sign",
-            "VERSION",
-        ]:
+        elif key in ["hardware_description", "station_name", "call_sign", "VERSION"]:
             # Should be strings, but are in array of ascii
             data[key] = "".join(chr(char) for char in data[key])
     time_vals = [
@@ -606,9 +569,7 @@ def locate_mat(data_path, date, tx, rx, resolution):
     ]
     for filename in filenames:
         if not os.path.exists(filename):
-            print(
-                f"Data missing from {tx}-{rx} on {date.strftime('%b %d, %Y')}"
-            )
+            print(f"Data missing from {tx}-{rx} on {date.strftime('%b %d, %Y')}")
             return None
     return filenames
 
@@ -651,3 +612,35 @@ def join_days(days):
             raise RuntimeError("Data is not consistently rotated")
 
     return data
+
+
+def rotate_vectors(NS, EW, rx, tx, correction_val=0.0):
+    """ Rotate a set of tuples from N/S, E/W orientation to Radial, Azimuthal orientation
+
+    Parameters
+    ----------
+    NS: tuple(np.ndarray, np.ndarray)
+        N/S amplitude, phase
+    EW: tuple(np.ndarray, np.ndarray)
+        E/W amplitude, phase
+    rx: str
+        Receiver name
+    tx: str
+        Transmitter name
+
+    Returns
+    -------
+    tuple(np.ndarray, np.ndarray)
+        ([radial amplitude, radial phase], [azimuthal amplitude, azimuthal phase])
+    """
+    amp_ns, phase_ns = NS
+    amp_ew, phase_ew = EW
+    b_ns = amp_ns * np.exp(1j * np.deg2rad(phase_ns))
+    b_ew = amp_ew * np.exp(1j * np.deg2rad(phase_ew))
+    az = lf.utils.get_azimuth(rx, tx) - correction_val
+    b_r, b_az = lf.utils.rot_az(az).dot([b_ns, -b_ew])
+    amp_r = np.abs(b_r)
+    phase_r = np.rad2deg(np.angle(b_r))
+    amp_az = np.abs(b_az)
+    phase_az = np.rad2deg(np.angle(b_az))
+    return (np.array([amp_r, phase_r]), np.array([amp_az, phase_az]))

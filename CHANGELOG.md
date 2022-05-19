@@ -4,6 +4,16 @@ The format for this changelog is based on [Keep a Changelog](https://keepachange
 and this project adheres to (mostly) [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 All dates listed follow the ISO standard of yyyy-mm-dd.
 
+## [Unreleased]
+### Added
+ - Implement lf.data.rx.rotate_vector function [David Richardson <drichardson42@gatech.edu>]
+    - Allows rotations of arbitrary length vectors of N/S, E/W to radial, azimuth
+### Changed
+ - Modify lf.data.rx.data.rotate_data to use lf.data.rx.rotate_vector function [David Richardson <drichardson42@gatech.edu>]
+### Removed
+
+
+
 ## [0.1.6] - 2021-01-06
 ### Added
  - Implement join_days to enable joining of multiple consecutive LFData objects [David Richardson <drichardson42@gatech.edu>]
