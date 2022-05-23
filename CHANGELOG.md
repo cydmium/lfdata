@@ -4,7 +4,7 @@ The format for this changelog is based on [Keep a Changelog](https://keepachange
 and this project adheres to (mostly) [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 All dates listed follow the ISO standard of yyyy-mm-dd.
 
-## [Unreleased]
+## [0.1.7] - 2022-05-23
 ### Added
  - Implement lf.data.rx.rotate_vectors function [David Richardson <drichardson42@gatech.edu>]
     - Allows rotations of arbitrary length vectors of N/S, E/W to radial, azimuth
@@ -12,7 +12,7 @@ All dates listed follow the ISO standard of yyyy-mm-dd.
     - Allows rotations of arbitrary length vectors of radial, azimuth to parameters of elliptically polarized wave
  - Implement lf.utils.rot_tilt function [Nikhil Pailoor <npailoor3@gatech.edu>]
     - Generates rotation matrix used in lf.data.rx.rotate_vectors_ellipse
- - Implement lf.data.rx.rotate_polar
+ - Implement lf.data.rx.rotate_polar [Nikhil Pailoor <npailoor3@gatech.edu>]
     - Uses lf.data.rx.rotate_vectors_ellipse to generate polarization ellipse parameters for the data field
 ### Changed
  - Modify lf.data.rx.data.rotate_data to use lf.data.rx.rotate_vector function [David Richardson <drichardson42@gatech.edu>]
