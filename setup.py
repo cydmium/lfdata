@@ -5,7 +5,7 @@ with open("README.md", "r") as f:
 
 setup(
     name="lf",
-    version="0.1.6",
+    version="0.1.7",
     description="Tools for interacting with GT's LF AWESOME Receiver data",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -20,7 +20,7 @@ setup(
         "Programming Language :: Python :: 3.7",
         "License :: OSI Approved :: GNU General Public License v3 or later "
         "(GPLv3+)",
-        "Development Status :: 2 - Pre-Alpha",
+        "Development Status :: 3 - Alpha",
         "Intended Audience :: Science/Research",
     ],
     install_requires=[
