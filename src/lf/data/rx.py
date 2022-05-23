@@ -266,7 +266,8 @@ class LFData(object):
 
         Returns
         -------
-        self
+        dict:
+            Dictionary containing VLF data
 
         """
         self.data["R"], self.data["Az"] = rotate_vectors(
@@ -274,19 +275,24 @@ class LFData(object):
         )
         self.rotated = True
         return self.data
-    
+
     def rotate_polar(self):
         """ Rotate data to be in polarization ellipse format
+
         Returns
         -------
-        self
+        dict:
+            Dictionary containing VLF data
+
         """
         if ~(self.rotated):
             self.rotate_data()
-        self.data["Major"],self.data["Minor"], self.data["Tilt"], self.data["Start"], self.data["Chi"] = rotate_vectors_ellipse(self.data["R"],self.data["Az"])
+        self.data["Major"], self.data["Minor"], self.data["Tilt"], self.data[
+            "Start"
+        ], self.data["Chi"] = rotate_vectors_ellipse(self.data["R"], self.data["Az"])
         self.polar = True
-        return self.data        
- 
+        return self.data
+
     def trim(self, start, duration):
         """ Cut out data that is not needed
 
@@ -657,15 +663,17 @@ def rotate_vectors(NS, EW, rx, tx, correction_val=0.0):
     phase_az = np.rad2deg(np.angle(b_az))
     return (np.array([amp_r, phase_r]), np.array([amp_az, phase_az]))
 
-def rotate_vectors_ellipse(R,Az):
-    """Rotate a set of tuples from Radial/Azimuthal orientation to a polarization ellipse format as described by Gross (2018), with a major and minor axis amplitude components, tilt angle, and start phase.
+
+def rotate_vectors_ellipse(R, Az):
+    """ Rotate a set of tuples from Radial/Azimuthal orientation to a polarization ellipse format as described by Gross (2018), with a major and minor axis amplitude components, tilt angle, and start phase.
+
     Parameters:
     ----------
     R: tuple(np.ndarray, np.ndarray)
         Radial amplitude, phase
     Az: tuple(np.ndarray, np.ndarray)
         Azimuthal amplitude, phase
- 
+
     Returns
     -------
     tuple(ndarray)
@@ -673,23 +681,27 @@ def rotate_vectors_ellipse(R,Az):
 
     """
     amp_r, phase_r = R
-    amp_az,phase_az = Az
-    B_r = amp_r*np.exp(1j*np.deg2rad(phase_r))
-    B_az = amp_az*np.exp(1j*np.deg2rad(phase_az))
-    #Calculate tilt angle
-    psi_0 = np.angle(np.divide(-B_r,B_az))
-    gamma = np.divide(amp_r,amp_az)
-    tilt_angle = (1/2)*np.arctan2(2*np.multiply(gamma,np.cos(psi_0)),(1-np.square(gamma)))
-    #Apply rotation
+    amp_az, phase_az = Az
+    B_r = amp_r * np.exp(1j * np.deg2rad(phase_r))
+    B_az = amp_az * np.exp(1j * np.deg2rad(phase_az))
+    # Calculate tilt angle
+    psi_0 = np.angle(np.divide(-B_r, B_az))
+    gamma = np.divide(amp_r, amp_az)
+    tilt_angle = (1 / 2) * np.arctan2(
+        2 * np.multiply(gamma, np.cos(psi_0)), (1 - np.square(gamma))
+    )
+    # Apply rotation
     rot_matrix = lf.utils.rot_tilt(tilt_angle)
-    B_min,B_maj = 1j*np.zeros([2,len(B_r)])
+    B_min, B_maj = 1j * np.zeros([2, len(B_r)])
     for i in range(len(B_r)):
-        B_min[i],B_maj[i] = np.dot(rot_matrix[:,:,i],[B_r[i], B_az[i]])
-    start_phase = -1*np.angle(B_maj)
+        B_min[i], B_maj[i] = np.dot(rot_matrix[:, :, i], np.array([B_r[i], B_az[i]]))
+    start_phase = -1 * np.angle(B_maj)
     amp_maj = np.abs(B_maj)
     amp_min = np.abs(B_min)
-    #Calculate ellipticity
-    chi = 0.5*np.arcsin(2*np.multiply(np.divide(gamma,(1+np.square(gamma))),np.sin(psi_0)))
-    #Flip sign of minor axis to indicate rotation direction
-    amp_min = np.multiply(np.sign(chi),amp_min)
-    return amp_maj,amp_min,tilt_angle,start_phase,chi
+    # Calculate ellipticity
+    chi = 0.5 * np.arcsin(
+        2 * np.multiply(np.divide(gamma, (1 + np.square(gamma))), np.sin(psi_0))
+    )
+    # Flip sign of minor axis to indicate rotation direction
+    amp_min = np.multiply(np.sign(chi), amp_min)
+    return amp_maj, amp_min, tilt_angle, start_phase, chi
