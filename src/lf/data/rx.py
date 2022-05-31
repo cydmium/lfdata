@@ -705,3 +705,41 @@ def rotate_vectors_ellipse(R, Az):
     # Flip sign of minor axis to indicate rotation direction
     amp_min = np.multiply(np.sign(chi), amp_min)
     return amp_maj, amp_min, tilt_angle, start_phase, chi
+
+def scattered_ellipse(B_amb,B_dist):
+    '''
+    Calculates the polarization ellipse of the scattered field, given two
+    sets of measurements in polarization ellipse format.
+    
+    Parameters
+    ------------
+    B_amb: tuple(np.ndarray)
+           Ambient major axis, minor axis, tilt angle
+    B_dist: tuple(np.ndarray)
+           Disturbed major axis, minor axis, tilt angle
+    
+    Returns
+    ------------
+    B_scattered:
+           tuple(np.ndarray)
+           Scattered major axis, minor axis, tilt angle
+    '''
+    maj_amb,min_amb,tilt_amb = B_amb
+    maj_dist,min_dist,tilt_dist = B_dist
+    # Use law of cosines to calculate disturbed ellipse axes
+    maj_scattered = np.square(maj_amb) + np.square(maj_dist)
+    correction = 2*np.multiply(np.multiply(maj_amb,maj_dist),
+np.cos(tilt_dist-tilt_amb))
+    maj_scattered = np.sqrt(maj_scattered - correction)
+    min_scattered = np.square(min_amb) + np.square(min_dist)
+    correction = 2*np.multiply(np.multiply(min_amb,min_dist),
+np.cos(tilt_dist-tilt_amb))
+    min_scattered = np.sqrt(min_scattered - correction)
+    # compute x and y projections of major axis to find tilt angle
+    y_maj = np.multiply(maj_dist,np.sin(tilt_dist)) - np.multiply(
+maj_amb,np.sin(tilt_amb)) 
+    x_maj = np.multiply(maj_dist,np.cos(tilt_dist)) - np.multiply(
+maj_amb,np.cos(tilt_amb)) 
+    tilt_scattered = np.arctan2(y_maj,x_maj)
+    return (maj_scattered,min_scattered,tilt_scattered) 
+    
