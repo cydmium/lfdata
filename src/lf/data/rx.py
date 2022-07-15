@@ -442,7 +442,7 @@ def load_rx_data(mat_file, variables=None, file_check=True):
             data[key] = bool(data[key][0][0])
         elif key in ["hardware_description", "station_name", "call_sign", "VERSION"]:
             # Should be strings, but are in array of ascii
-            data[key] = "".join(chr(char) for char in data[key])
+            data[key] = "".join(chr(char) for char in data[key].ravel())
     time_vals = [
         "start_year",
         "start_month",
