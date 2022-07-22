@@ -23,7 +23,7 @@ import lf.utils
 
 
 class LFData(object):
-    """ Manage VLF data for a single transmit-receive path.
+    """Manage VLF data for a single transmit-receive path.
 
     Attributes
     ----------
@@ -79,7 +79,7 @@ class LFData(object):
     """
 
     def __init__(self, mat_files=None, data_dicts=None):
-        """ Load in either .mat files or data dictionaries for a single path
+        """Load in either .mat files or data dictionaries for a single path
 
         Parameters
         ----------
@@ -97,7 +97,7 @@ class LFData(object):
             self.load_dicts(data_dicts)
 
     def load_mats(self, mat_files):
-        """ Load .mat files into the LFData object
+        """Load .mat files into the LFData object
 
         Parameters
         ----------
@@ -119,7 +119,7 @@ class LFData(object):
         self.combine_data(data)
 
     def load_dicts(self, data_dicts):
-        """ Load data dictionaries into LFData object
+        """Load data dictionaries into LFData object
 
         Parameters
         ----------
@@ -140,7 +140,7 @@ class LFData(object):
         self.combine_data(data)
 
     def combine_data(self, data_list):
-        """ Combine amplitude and phase data into a single data structure
+        """Combine amplitude and phase data into a single data structure
 
         Parameters
         ----------
@@ -226,7 +226,7 @@ class LFData(object):
                 setattr(self, key, value)
 
     def calibrate(self, cal_table=None, cal_table_path=None, cal_dir=None):
-        """ Calibrate the data using a calibration table
+        """Calibrate the data using a calibration table
 
         Parameters
         ----------
@@ -257,7 +257,7 @@ class LFData(object):
         self.data = cal_table.cal_data(self.data, self.rx, self.tx, self.start_time)
 
     def rotate_data(self, correction_val=0.0):
-        """ Rotate data to be in az and radial components
+        """Rotate data to be in az and radial components
 
         Parameters
         ----------
@@ -277,7 +277,7 @@ class LFData(object):
         return self.data
 
     def rotate_polar(self):
-        """ Rotate data to be in polarization ellipse format
+        """Rotate data to be in polarization ellipse format
 
         Returns
         -------
@@ -287,14 +287,18 @@ class LFData(object):
         """
         if ~(self.rotated):
             self.rotate_data()
-        self.data["Major"], self.data["Minor"], self.data["Tilt"], self.data[
-            "Start"
-        ], self.data["Chi"] = rotate_vectors_ellipse(self.data["R"], self.data["Az"])
+        (
+            self.data["Major"],
+            self.data["Minor"],
+            self.data["Tilt"],
+            self.data["Start"],
+            self.data["Chi"],
+        ) = rotate_vectors_ellipse(self.data["R"], self.data["Az"])
         self.polar = True
         return self.data
 
     def trim(self, start, duration):
-        """ Cut out data that is not needed
+        """Cut out data that is not needed
 
         Parameters
         ----------
@@ -321,7 +325,7 @@ class LFData(object):
         self.start_time = start
 
     def plot(self):
-        """ Plot the data
+        """Plot the data
 
         Returns
         -------
@@ -378,7 +382,7 @@ class LFData(object):
 
 
 def load_rx_data(mat_file, variables=None, file_check=True):
-    """ Properly format an LF AWESOME receiver's output mat file
+    """Properly format an LF AWESOME receiver's output mat file
 
     Parameters
     ----------
@@ -476,7 +480,7 @@ def load_rx_data(mat_file, variables=None, file_check=True):
 
 
 def check_mat(mat_file, variables=None):
-    """ Check if a .mat file is a valid LF data mat file
+    """Check if a .mat file is a valid LF data mat file
 
     Parameters
     ----------
@@ -536,7 +540,7 @@ def check_mat(mat_file, variables=None):
 
 
 def locate_mat(data_path, date, tx, rx, resolution):
-    """ Determine the four mat_files associated with the provided Tx-Rx Path
+    """Determine the four mat_files associated with the provided Tx-Rx Path
 
     Parameters
     ----------
@@ -593,7 +597,7 @@ def locate_mat(data_path, date, tx, rx, resolution):
 
 
 def join_days(days):
-    """ Join two consecutive instances of LFData objects
+    """Join two consecutive instances of LFData objects
 
     Parameters
     ----------
@@ -633,7 +637,7 @@ def join_days(days):
 
 
 def rotate_vectors(NS, EW, rx, tx, correction_val=0.0):
-    """ Rotate a set of tuples from N/S, E/W orientation to Radial, Azimuthal orientation
+    """Rotate a set of tuples from N/S, E/W orientation to Radial, Azimuthal orientation
 
     Parameters
     ----------
@@ -665,7 +669,7 @@ def rotate_vectors(NS, EW, rx, tx, correction_val=0.0):
 
 
 def rotate_vectors_ellipse(R, Az):
-    """ Rotate a set of tuples from Radial/Azimuthal orientation to a polarization ellipse format as described by Gross (2018), with a major and minor axis amplitude components, tilt angle, and start phase.
+    """Rotate a set of tuples from Radial/Azimuthal orientation to a polarization ellipse format as described by Gross (2018), with a major and minor axis amplitude components, tilt angle, and start phase.
 
     Parameters:
     ----------
@@ -706,40 +710,44 @@ def rotate_vectors_ellipse(R, Az):
     amp_min = np.multiply(np.sign(chi), amp_min)
     return amp_maj, amp_min, tilt_angle, start_phase, chi
 
-def scattered_ellipse(B_amb,B_dist):
-    '''
+
+def scattered_ellipse(B_amb, B_dist):
+    """
     Calculates the polarization ellipse of the scattered field, given two
     sets of measurements in polarization ellipse format.
-    
+
     Parameters
     ------------
     B_amb: tuple(np.ndarray)
            Ambient major axis, minor axis, tilt angle
     B_dist: tuple(np.ndarray)
            Disturbed major axis, minor axis, tilt angle
-    
+
     Returns
     ------------
     B_scattered:
            tuple(np.ndarray)
            Scattered major axis, minor axis, tilt angle
-    '''
-    maj_amb,min_amb,tilt_amb = B_amb
-    maj_dist,min_dist,tilt_dist = B_dist
+    """
+    maj_amb, min_amb, tilt_amb = B_amb
+    maj_dist, min_dist, tilt_dist = B_dist
     # Use law of cosines to calculate disturbed ellipse axes
     maj_scattered = np.square(maj_amb) + np.square(maj_dist)
-    correction = 2*np.multiply(np.multiply(maj_amb,maj_dist),
-np.cos(tilt_dist-tilt_amb))
+    correction = 2 * np.multiply(
+        np.multiply(maj_amb, maj_dist), np.cos(tilt_dist - tilt_amb)
+    )
     maj_scattered = np.sqrt(maj_scattered - correction)
     min_scattered = np.square(min_amb) + np.square(min_dist)
-    correction = 2*np.multiply(np.multiply(min_amb,min_dist),
-np.cos(tilt_dist-tilt_amb))
+    correction = 2 * np.multiply(
+        np.multiply(min_amb, min_dist), np.cos(tilt_dist - tilt_amb)
+    )
     min_scattered = np.sqrt(min_scattered - correction)
     # compute x and y projections of major axis to find tilt angle
-    y_maj = np.multiply(maj_dist,np.sin(tilt_dist)) - np.multiply(
-maj_amb,np.sin(tilt_amb)) 
-    x_maj = np.multiply(maj_dist,np.cos(tilt_dist)) - np.multiply(
-maj_amb,np.cos(tilt_amb)) 
-    tilt_scattered = np.arctan2(y_maj,x_maj)
-    return (maj_scattered,min_scattered,tilt_scattered) 
-    
+    y_maj = np.multiply(maj_dist, np.sin(tilt_dist)) - np.multiply(
+        maj_amb, np.sin(tilt_amb)
+    )
+    x_maj = np.multiply(maj_dist, np.cos(tilt_dist)) - np.multiply(
+        maj_amb, np.cos(tilt_amb)
+    )
+    tilt_scattered = np.arctan2(y_maj, x_maj)
+    return (maj_scattered, min_scattered, tilt_scattered)
