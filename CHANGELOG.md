@@ -4,6 +4,17 @@ The format for this changelog is based on [Keep a Changelog](https://keepachange
 and this project adheres to (mostly) [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 All dates listed follow the ISO standard of yyyy-mm-dd.
 
+
+## [0.1.8] - 2022-07-22
+### Added
+ - Implement lf.data.rx.scattered_ellipse [Nikhil Pailoor <npailoor3@gatech.edu>]
+### Fixed
+ - lf.data.rx.load_rx_data had a bug introduced by either scipy changing how it loaded the ascii text into a numpy array. This has now been fixed [Thomas Holder <tholder7@gatech.edu]
+### Changed
+
+### Removed
+
+
 ## [0.1.7] - 2022-05-23
 ### Added
  - Implement lf.data.rx.rotate_vectors function [David Richardson <drichardson42@gatech.edu>]
