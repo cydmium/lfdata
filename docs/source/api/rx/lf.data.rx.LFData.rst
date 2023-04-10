@@ -16,3 +16,4 @@ lf.data.rx.LFData
       ~LFData.load_mats
       ~LFData.plot
       ~LFData.rotate_data
+      ~LFData.rotate_polar

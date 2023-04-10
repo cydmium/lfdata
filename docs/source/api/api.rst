@@ -12,6 +12,8 @@ Data
    lf.data.rx.check_mat
    lf.data.rx.load_rx_data
    lf.data.rx.locate_mat
+   lf.data.rx.rotate_vectors
+   lf.data.rx.rotate_vectors_ellipse
 
 Data Quality
 ------------
