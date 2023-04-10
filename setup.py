@@ -26,7 +26,7 @@ setup(
     install_requires=[
         "scipy",
         "numpy",
-        "sklearn",
+        "scikit-learn",
         "geographiclib",
         "pandas",
         "pysolar>=0.8",
