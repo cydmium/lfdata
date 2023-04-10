@@ -5,6 +5,16 @@ and this project adheres to (mostly) [Semantic Versioning](https://semver.org/sp
 All dates listed follow the ISO standard of yyyy-mm-dd.
 
 
+## [0.1.9] - 2023-04-10
+### Added
+
+### Fixed
+ - Change requirements from sklearn to scikit-learn as sklearn has now been deprecated for pip installs
+### Changed
+
+### Removed
+
+
 ## [0.1.8] - 2022-07-22
 ### Added
  - Implement lf.data.rx.scattered_ellipse [Nikhil Pailoor <npailoor3@gatech.edu>]
